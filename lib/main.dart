@@ -2,6 +2,7 @@ import 'dart:js';
 
 import 'package:diario_viagens_front/pages/cadastro/cadastro_page.dart';
 import 'package:diario_viagens_front/pages/home/home_page.dart';
+import 'package:diario_viagens_front/pages/home/main_page.dart';
 import 'package:diario_viagens_front/pages/login/login_page.dart';
 import 'package:diario_viagens_front/services/auth_service.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
@@ -36,7 +37,7 @@ class MainApp extends StatelessWidget {
           } else if (provider.user == null) {
             return LoginPage();
           } else {
-            return HomePage();
+            return MainPage();
           }
         },
       )
