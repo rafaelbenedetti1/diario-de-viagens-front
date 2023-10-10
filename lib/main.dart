@@ -1,4 +1,4 @@
-import 'dart:js';
+
 
 import 'package:diario_viagens_front/pages/cadastro/cadastro_page.dart';
 import 'package:diario_viagens_front/pages/home/home_page.dart';
