@@ -1,5 +1,6 @@
 import 'package:diario_viagens_front/components/form_field.dart';
 import 'package:diario_viagens_front/pages/cadastro/cadastro_page.dart';
+import 'package:diario_viagens_front/pages/viagem/add_viagem_page.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
@@ -146,29 +147,14 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  SpeedDial menuButton(BuildContext context) {
-    return SpeedDial(
+   menuButton(BuildContext context) {
+    return FloatingActionButton(onPressed: () {
+      Navigator.push(context, MaterialPageRoute(builder: (_) => AddViagemPage()));
+    },
       tooltip: "Menu de Ações",
-      buttonSize: Size(50, 50),
-      spacing: 10,
-      backgroundColor: theme.primaryColor,
-      overlayColor: Colors.black,
-      overlayOpacity: 0.2,
-      animatedIcon: AnimatedIcons.menu_close,
-      animatedIconTheme: IconThemeData(color: Colors.white),
-      children: [
-        SpeedDialChild(
-            child: Icon(Icons.add, color: Color.fromRGBO(4, 59, 101, 1)),
-            label: 'Adicionar Viagem',
-            labelStyle: theme.textTheme.headline5,
-            backgroundColor: Color.fromRGBO(245, 245, 245, 1),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CadastroPage()),
-              );
-            })
-      ],
+      backgroundColor: Color.fromARGB(255, 204, 204, 204),
+    child: Icon(Icons.add_a_photo, color: theme.primaryColor,),
+    
     );
   }
 }
