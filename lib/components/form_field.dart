@@ -12,7 +12,7 @@ class AppFormField extends StatelessWidget {
   final bool enabled;
   final bool fadeTextIfDisabled;
   final bool obsecureText;
-  final Function? onTap;
+  final VoidCallback? onTap;
   final Function? onFiledSubmited;
   final EdgeInsets margin;
   final double? width;
@@ -23,6 +23,7 @@ class AppFormField extends StatelessWidget {
   final TextCapitalization textCapitalization;
   final bool autocorrect;
   final Widget? suffixIcon;
+  final bool? readOnly;
 
   AppFormField(
       {this.label,
@@ -44,7 +45,8 @@ class AppFormField extends StatelessWidget {
       this.autocorrect = true,
       this.onFiledSubmited,
       this.suffixIcon,
-      this.textInputAction});
+      this.textInputAction,
+      this.readOnly});
 
   @override
   Widget build(BuildContext context) {
@@ -57,7 +59,7 @@ class AppFormField extends StatelessWidget {
     return Padding(
       padding: margin,
       child: GestureDetector(
-        onTap: (onTap != null) ? onTap!() : () {},
+        onTap: onTap,
         child: Container(
           width: width,
           decoration: BoxDecoration(
@@ -67,6 +69,7 @@ class AppFormField extends StatelessWidget {
           ),
           padding: EdgeInsets.only(left: 20, right: 8, bottom: 15),
           child: TextFormField(
+            readOnly: readOnly ?? false,
             style: TextStyle(
               color: Colors.grey[900],
             ),
