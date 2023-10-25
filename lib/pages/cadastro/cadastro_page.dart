@@ -103,6 +103,8 @@ class _CadastroPageState extends State<CadastroPage> {
         hint: 'Informe sua senha',
         controller: _controllerPassword,
         currentFocus: _focusNodePassword,
+                obsecureText: _obscureText,
+
         onFiledSubmited: () {},
         suffixIcon: GestureDetector(
           onTap: _togglePasswordType,

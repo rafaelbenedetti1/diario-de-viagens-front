@@ -1,8 +1,11 @@
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:diario_viagens_front/components/form_field.dart';
+import 'package:diario_viagens_front/components/info_timeline.dart';
+import 'package:diario_viagens_front/pages/home/mesma.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 
 class AddViagemPage extends StatefulWidget {
   const AddViagemPage({super.key});
@@ -28,83 +31,83 @@ class _AddViagemPageState extends State<AddViagemPage> {
             width: 80,
           ),
         ),
-        body: Column(children: [
-          const SizedBox(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.image_search,
-                  size: 40,
-                ),
-                Text(
-                  'Adicionar foto de capa',
-                  style: TextStyle(fontSize: 16),
-                )
-              ],
+        body: ListView(children: [
+          Expanded(
+            child: const SizedBox(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.image_search,
+                    size: 40,
+                  ),
+                  Text(
+                    'Adicionar foto de capa',
+                    style: TextStyle(fontSize: 16),
+                  )
+                ],
+              ),
+              height: 120,
+              width: double.infinity,
             ),
-            height: 120,
-            width: double.infinity,
           ),
           Expanded(
-            child: SizedBox(
-              height: double.infinity,
-              child: Card(
-                shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(25),
-                        topRight: Radius.circular(25))),
-                margin: EdgeInsets.zero,
-                color: Color.fromARGB(255, 245, 245, 245),
-                elevation: 6,
-                child: Padding(
-                  padding: const EdgeInsets.all(5.0),
-                  child: Column(
-                    children: [
-                      const Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Para onde você foi?',
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.w600),
-                            ),
-                          ],
+            child: Card(
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(25),
+                      topRight: Radius.circular(25))),
+              margin: EdgeInsets.zero,
+              color: Color.fromARGB(255, 245, 245, 245),
+              elevation: 6,
+              child: Padding(
+                padding: const EdgeInsets.all(5.0),
+                child: Column(
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Para onde você foi?',
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      children: [
+                        Flexible(
+                          flex: 2,
+                          child: AppFormField(
+                            label: 'País',
+                            suffixIcon:
+                                const Icon(FontAwesomeIcons.earthAmericas),
+                          ),
                         ),
-                      ),
-                      Row(
-                        children: [
-                          Flexible(
-                            flex: 2,
-                            child: AppFormField(
-                              label: 'País',
-                              suffixIcon:
-                                  const Icon(FontAwesomeIcons.earthAmericas),
-                            ),
+                        Flexible(
+                          flex: 2,
+                          child: AppFormField(
+                            label: 'Estado',
+                            suffixIcon: const Icon(FontAwesomeIcons.globe),
                           ),
-                          Flexible(
-                            flex: 2,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Expanded(
                             child: AppFormField(
-                              label: 'Estado',
-                              suffixIcon: const Icon(FontAwesomeIcons.globe),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                              child: AppFormField(
-                            label: 'Cidade',
-                            suffixIcon: const Icon(FontAwesomeIcons.building),
-                          )),
-                        ],
-                      ),
-                      _buildCalendarDialogButton()
-                    ],
-                  ),
+                          label: 'Cidade',
+                          suffixIcon: const Icon(FontAwesomeIcons.building),
+                        )),
+                      ],
+                    ),
+                    _buildCalendarDialogButton(),
+                    PackageDeliveryTrackingPage(conteudo: _data()),
+                  ],
                 ),
               ),
             ),
@@ -231,7 +234,7 @@ class _AddViagemPageState extends State<AddViagemPage> {
         children: [
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: theme.primaryColor, fixedSize: Size(200, 40)),
+                backgroundColor: theme.primaryColor, fixedSize: Size(230, 40)),
             onPressed: () async {
               final values = await showCalendarDatePicker2Dialog(
                 context: context,
@@ -254,48 +257,63 @@ class _AddViagemPageState extends State<AddViagemPage> {
                 SizedBox(width: 5),
                 Text(_dialogCalendarPickerValue.isEmpty
                     ? 'Data Início e Fim'
-                    : 'Alterar Datas'),
+                    : _dialogCalendarPickerValue != null &&
+              _dialogCalendarPickerValue.length >= 2 ?_getValueText(config.calendarType, _dialogCalendarPickerValue): ''),
               ],
             ),
           ),
-          if (_dialogCalendarPickerValue != null &&
-              _dialogCalendarPickerValue.length >= 2)
-            Padding(
-              padding: const EdgeInsets.all(8),
-              child: Text(
-                _getValueText(config.calendarType, _dialogCalendarPickerValue),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 18,
-                  color: Colors.black,
-                ),
-              ),
-            ),
+      
         ],
       ),
     );
   }
 
   String _getValueText(
-    CalendarDatePicker2Type datePickerType,
-    List<DateTime?> values,
-  ) {
-    values =
-        values.map((e) => e != null ? DateUtils.dateOnly(e) : null).toList();
-    var valueText = (values.isNotEmpty ? values[0] : null)
-        .toString()
-        .replaceAll('00:00:00.000', '');
+  CalendarDatePicker2Type datePickerType,
+  List<DateTime?> values,
+) {
+  values = values.map((e) => e != null ? DateUtils.dateOnly(e) : null).toList();
+  var valueText = (values.isNotEmpty ? values[0] : null)
+      .toString()
+      .replaceAll('00:00:00.000', '');
 
-    if (values.isNotEmpty) {
-      final startDate = values[0].toString().replaceAll('00:00:00.000', '');
-      final endDate = values.length > 1
-          ? values[1].toString().replaceAll('00:00:00.000', '')
-          : 'null';
-      valueText = '$startDate to $endDate';
-    } else {
-      return 'null';
-    }
+  if (values.isNotEmpty) {
+    final startDate = DateFormat('dd/MM/yyyy').format(values[0]!);
+    final endDate = values.length > 1
+        ? DateFormat('dd/MM/yyyy').format(values[1]!)
+        : 'null';
 
-    return valueText;
+    valueText = '$startDate a $endDate';
+  } else {
+    return 'null';
+  }
+
+  return valueText;
+}
+  OrderInfo _data() {
+    return OrderInfo(
+      date: DateTime.now(),
+      deliveryProcesses: [
+        DeliveryProcess(
+          'Templo Sagrado',
+          messages: [
+            DeliveryMessage(
+              '24/12/2023',
+            ),
+            deliveryImage('')
+          ],
+        ),
+        DeliveryProcess(
+          'Parque Municipal',
+          messages: [
+            DeliveryMessage(
+              '13:00pm',
+            ),
+            deliveryImage('')
+          ],
+        ),
+        DeliveryProcess.complete(),
+      ],
+    );
   }
 }

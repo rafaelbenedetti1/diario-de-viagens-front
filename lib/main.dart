@@ -1,4 +1,5 @@
 import 'package:diario_viagens_front/pages/home/main_page.dart';
+import 'package:diario_viagens_front/pages/home/mesma.dart';
 import 'package:diario_viagens_front/pages/login/login_page.dart';
 import 'package:diario_viagens_front/services/auth_service.dart';
 import 'package:diario_viagens_front/theme/theme.dart';

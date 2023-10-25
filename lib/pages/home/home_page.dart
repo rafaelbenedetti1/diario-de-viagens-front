@@ -37,13 +37,13 @@ class HomePage extends StatelessWidget {
                 itemCount: 6,
                 itemBuilder: (context, index) {
                   return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: const EdgeInsets.symmetric(vertical: 6),
                     child: Card(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
                       ),
                       color: const Color.fromARGB(255, 243, 243, 243),
-                      elevation: 4,
+                      elevation: 2,
                       child: Container(
                         width: double.infinity,
                         height: 120,
