@@ -1,14 +1,32 @@
+import 'dart:convert';
+import 'dart:io' as io;
+
+
+import 'package:calendar_date_picker2/calendar_date_picker2.dart';
+import 'package:diario_viagens_front/components/form_field.dart';
 import 'package:diario_viagens_front/components/info_timeline.dart';
+import 'package:diario_viagens_front/theme/theme.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:timelines/timelines.dart';
 
 const kTileHeight = 50.0;
 
-class PackageDeliveryTrackingPage extends StatelessWidget {
+class PackageDeliveryTrackingPage extends StatefulWidget {
   OrderInfo? conteudo;
 
   PackageDeliveryTrackingPage({required this.conteudo});
 
+  @override
+  State<PackageDeliveryTrackingPage> createState() => _PackageDeliveryTrackingPageState();
+}
+
+class _PackageDeliveryTrackingPageState extends State<PackageDeliveryTrackingPage> {
+  List<DateTime?> _dialogCalendarPickerValue = [];
+  final controllerData = TextEditingController();
+String img64 = '';
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -20,16 +38,281 @@ class PackageDeliveryTrackingPage extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.all(20.0),
               child: _OrderTitle(
-                orderInfo: conteudo!,
+                orderInfo: widget.conteudo!,
               ),
             ),
             Divider(height: 1.0),
-            _DeliveryProcesses(processes: conteudo!.deliveryProcesses),
+            Padding(
+                padding: EdgeInsets.all(20),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.primaryColor,
+                      fixedSize: Size(230, 40)),
+                  onPressed: () async {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Adicionar Visita"),
+                          content: Container(
+                                             height: 400,
+                          width: MediaQuery.of(context).size.width * 0.9,
+                            child: Column(
+                              children: [
+                                buildForm(TextEditingController(), "Title")
+                              ],
+                            ),
+                          ),
+                          actions: [],
+                        );
+                      },
+                    );
+                  },
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('Adicionar Visita'),
+                      SizedBox(width: 8),
+                      Icon(FontAwesomeIcons.locationDot),
+                    ],
+                  ),
+                )),
+            _DeliveryProcesses(processes: widget.conteudo!.deliveryProcesses),
           ],
         ),
       ),
     );
   }
+
+    Widget buildForm(TextEditingController controller, String title) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: AppFormField(
+              controller: controller,
+              label: 'Local',
+              suffixIcon: Icon(FontAwesomeIcons.tag),
+            ),
+          ),
+                    Flexible(
+            child: _buildCalendarDialogButton(),
+          ),
+          Flexible(
+            child:     seletorImagens(context)
+),
+Image.memory(base64Decode(img64), height: 150, width: 400,)
+        ],
+      ),
+    );
+  }
+
+  seletorImagens(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Center(
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 64),
+              backgroundColor:
+                  theme.primaryColor,
+            ),
+            icon: const Icon(Icons.image, size: 32),
+            onPressed: () {
+              _pickSvg();
+            },
+            label: const Text('Anexar Imagem'),
+          ),
+        ),
+    );
+  }
+
+  _pickSvg() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.image,
+      );
+
+      if (result != null) {
+        // print(result.files.single.path);
+    //    setState(() {
+  List<io.File> files = result.paths.map((path) => io.File(path ?? '')).toList();
+  print(files);
+final bytes = io.File(files[0].path).readAsBytesSync();
+
+setState(() {
+img64 = base64Encode(bytes);
+  print(img64);
+
+});
+    //    });%
+      }
+  }
+
+    _buildCalendarDialogButton() {
+    const dayTextStyle =
+        TextStyle(color: Colors.black, fontWeight: FontWeight.normal);
+    final weekendTextStyle =
+        const TextStyle(color: Colors.black, fontWeight: FontWeight.w600);
+    final config = CalendarDatePicker2WithActionButtonsConfig(
+      dayTextStyle: dayTextStyle,
+      calendarType: CalendarDatePicker2Type.single,
+      selectedDayHighlightColor: theme.primaryColor,
+      closeDialogOnCancelTapped: true,
+      firstDayOfWeek: 1,
+      weekdayLabelTextStyle: const TextStyle(
+        color: Colors.black87,
+        fontWeight: FontWeight.bold,
+      ),
+      controlsTextStyle: const TextStyle(
+        color: Colors.black,
+        fontSize: 15,
+        fontWeight: FontWeight.bold,
+      ),
+      centerAlignModePicker: true,
+      customModePickerIcon: const SizedBox(),
+      selectedDayTextStyle: dayTextStyle.copyWith(color: Colors.white),
+      dayTextStylePredicate: ({required date}) {
+        TextStyle? textStyle;
+        if (date.weekday == DateTime.saturday ||
+            date.weekday == DateTime.sunday) {
+          textStyle = weekendTextStyle;
+        }
+        return textStyle;
+      },
+      dayBuilder: ({
+        required date,
+        textStyle,
+        decoration,
+        isSelected,
+        isDisabled,
+        isToday,
+      }) {
+        Widget? dayWidget;
+        if (date.day % 3 == 0 && date.day % 9 != 0) {
+          dayWidget = Container(
+            decoration: decoration,
+            child: Center(
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  Text(
+                    MaterialLocalizations.of(context).formatDecimal(date.day),
+                    style: textStyle,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 27.5),
+                    child: Container(
+                      height: 4,
+                      width: 4,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(5),
+                        color: isSelected == true
+                            ? Colors.white
+                            : Colors.grey[500],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        return dayWidget;
+      },
+      yearBuilder: ({
+        required year,
+        decoration,
+        isCurrentYear,
+        isDisabled,
+        isSelected,
+        textStyle,
+      }) {
+        return Center(
+          child: Container(
+            decoration: decoration,
+            height: 36,
+            width: 72,
+            child: Center(
+              child: Semantics(
+                selected: isSelected,
+                button: true,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      year.toString(),
+                      style: textStyle,
+                    ),
+                    if (isCurrentYear == true)
+                      Container(
+                        padding: const EdgeInsets.all(5),
+                        margin: const EdgeInsets.only(left: 5),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.redAccent,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Flexible(
+          child: AppFormField(
+            label: 'Data',
+            suffixIcon: Icon(Icons.calendar_month_outlined),
+            readOnly: true,
+            enabled: false,
+            controller: controllerData,
+            onTap: () async {
+           final values = await showCalendarDatePicker2Dialog(
+                context: context,
+                config: config,
+                dialogSize: const Size(325, 400),
+                borderRadius: BorderRadius.circular(15),
+                value: _dialogCalendarPickerValue,
+                dialogBackgroundColor: Colors.white,
+              );
+              if (values != null) {
+                setState(() {
+                  _dialogCalendarPickerValue = values;
+                                  controllerData.text = _getValueText(config.calendarType, _dialogCalendarPickerValue);
+
+                });
+              }
+            },
+          ),
+        ),
+      ],
+    );
+  }
+    String _getValueText(
+  CalendarDatePicker2Type datePickerType,
+  List<DateTime?> values,
+) {
+  values = values.map((e) => e != null ? DateUtils.dateOnly(e) : null).toList();
+  var valueText = (values.isNotEmpty ? values[0] : null)
+      .toString()
+      .replaceAll('00:00:00.000', '');
+
+  if (values.isNotEmpty) {
+    final startDate = DateFormat('dd/MM/yyyy').format(values[0]!);
+
+
+    valueText = startDate;
+  } else {
+    return 'null';
+  }
+
+  return valueText;
+}
 }
 
 class _OrderTitle extends StatelessWidget {
@@ -51,11 +334,11 @@ class _OrderTitle extends StatelessWidget {
           ),
         ),
         Spacer(),
-        Text(
-          '${orderInfo.date.day}/${orderInfo.date.month}/${orderInfo.date.year}',
-          style: TextStyle(
-            color: Color(0xffb6b2b2),
-          ),
+          Text(
+            '${orderInfo.date.day}/${orderInfo.date.month}/${orderInfo.date.year}',
+            style: TextStyle(
+              color: Color(0xffb6b2b2),
+            ),
         ),
       ],
     );
@@ -124,7 +407,7 @@ class _DeliveryProcesses extends StatelessWidget {
         fontSize: 12.5,
       ),
       child: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.symmetric(horizontal:20.0, vertical: 5),
         child: FixedTimeline.tileBuilder(
           theme: TimelineThemeData(
             nodePosition: 0,
@@ -184,4 +467,6 @@ class _DeliveryProcesses extends StatelessWidget {
       ),
     );
   }
+
+
 }
