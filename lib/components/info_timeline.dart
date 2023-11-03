@@ -1,14 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class OrderInfo {
   const OrderInfo({
-    required this.date,
     required this.deliveryProcesses,
   });
 
-  final DateTime date;
   final List<DeliveryProcess> deliveryProcesses;
-  
 }
 
 class DeliveryProcess {
@@ -22,22 +21,7 @@ class DeliveryProcess {
         this.messages = const [];
 
   final String tituloVisita;
-  final List<dynamic> messages;
+  final List<Widget> messages;
 
   bool get isCompleted => tituloVisita == 'Done';
-}
-
-class DeliveryMessage {
-  const DeliveryMessage(this.message);
-
-  final String message;
-
-  @override
-  String toString() {
-    return ' $message';
-  }
-}
-
-deliveryImage(String imageAsset) {
-  return Image.asset(imageAsset);
 }

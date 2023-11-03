@@ -15,8 +15,9 @@ class ThemeApp {
     ];
   }
 
-  static defaultCardBorderRadius() => BorderRadius.circular(15);
-  static defaultCardColor({bool enabled = true}) => enabled ? Colors.white : Colors.white54;
+  static defaultCardBorderRadius() => BorderRadius.circular(8);
+  static defaultCardColor({bool enabled = true}) =>
+      enabled ? Colors.white : Colors.white54;
 }
 
 ThemeData theme = ThemeData(
@@ -66,5 +67,11 @@ ThemeData theme = ThemeData(
           color: Colors.grey[900],
         ),
         bodyText1: const TextStyle(
-            fontFamily: 'Comfortaa', fontSize: 14, fontWeight: FontWeight.bold, color: Color.fromRGBO(4, 59, 101, 1)),
-        bodyText2: TextStyle(fontFamily: 'SourceSansPro', fontSize: 14, color: Colors.grey[600])));
+            fontFamily: 'Comfortaa',
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Color.fromRGBO(4, 59, 101, 1)),
+        bodyText2: TextStyle(
+            fontFamily: 'SourceSansPro',
+            fontSize: 14,
+            color: Colors.grey[600])));

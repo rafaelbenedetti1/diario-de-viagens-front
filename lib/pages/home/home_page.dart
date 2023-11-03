@@ -12,6 +12,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        elevation: 0,
         toolbarHeight: 55,
         backgroundColor: theme.primaryColor,
         centerTitle: true,
@@ -21,16 +22,21 @@ class HomePage extends StatelessWidget {
           width: 80,
         ),
       ),
-      floatingActionButton: menuButton(context),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-             Text('Minhas Viagens', style: theme.textTheme.titleLarge,),
+            Text(
+              'Minhas Viagens',
+              style: theme.textTheme.titleLarge,
+            ),
             AppFormField(
               label: 'Buscar Viagens',
               hint: 'Cidade/País',
-              suffixIcon: Icon(Icons.search, size: 35,),
+              suffixIcon: Icon(
+                Icons.search,
+                size: 35,
+              ),
             ),
             Expanded(
               child: ListView.builder(
@@ -144,17 +150,6 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
-    );
-  }
-
-   menuButton(BuildContext context) {
-    return FloatingActionButton(onPressed: () {
-      Navigator.push(context, MaterialPageRoute(builder: (_) => AddViagemPage()));
-    },
-      tooltip: "Menu de Ações",
-      backgroundColor: Color.fromARGB(255, 204, 204, 204),
-    child: Icon(Icons.add_a_photo, color: theme.primaryColor,),
-    
     );
   }
 }

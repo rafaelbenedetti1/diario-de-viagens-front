@@ -1,12 +1,10 @@
 import 'dart:convert';
-import 'dart:io' as io;
-
 
 import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:diario_viagens_front/components/form_field.dart';
 import 'package:diario_viagens_front/components/info_timeline.dart';
+import 'package:diario_viagens_front/components/pick_svg.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
@@ -14,142 +12,189 @@ import 'package:timelines/timelines.dart';
 
 const kTileHeight = 50.0;
 
-class PackageDeliveryTrackingPage extends StatefulWidget {
-  OrderInfo? conteudo;
-
-  PackageDeliveryTrackingPage({required this.conteudo});
-
+class MinhasVisitas extends StatefulWidget {
   @override
-  State<PackageDeliveryTrackingPage> createState() => _PackageDeliveryTrackingPageState();
+  State<MinhasVisitas> createState() => _MinhasVisitasState();
 }
 
-class _PackageDeliveryTrackingPageState extends State<PackageDeliveryTrackingPage> {
+class _MinhasVisitasState extends State<MinhasVisitas> {
   List<DateTime?> _dialogCalendarPickerValue = [];
+  List<DeliveryProcess> visitas = [];
+  final controllerNome = TextEditingController();
+
   final controllerData = TextEditingController();
-String img64 = '';
+  String img64 = '';
+
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: Card(
-        margin: EdgeInsets.all(20.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: _OrderTitle(
-                orderInfo: widget.conteudo!,
-              ),
-            ),
-            Divider(height: 1.0),
-            Padding(
-                padding: EdgeInsets.all(20),
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.primaryColor,
-                      fixedSize: Size(230, 40)),
-                  onPressed: () async {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
+      child: Column(
+        children: [
+          Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Minhas Visitas',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  ),
+                  Icon(
+                    Icons.park_outlined,
+                    color: theme.primaryColor,
+                    size: 35,
+                  ),
+                ],
+              )),
+          Divider(height: 1.0),
+          Padding(
+              padding: EdgeInsets.all(20),
+              child: ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                    backgroundColor: theme.primaryColor,
+                    fixedSize: Size(230, 40)),
+                onPressed: () async {
+                  showDialog(
+                    barrierDismissible: false,
+                    context: context,
+                    builder: (BuildContext context) {
+                      return StatefulBuilder(builder: (context, setState) {
                         return AlertDialog(
-                          title: Text("Adicionar Visita"),
+                          title: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Adicionar Visita"),
+                              IconButton(
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                  icon: Icon(
+                                    Icons.close,
+                                    color: Colors.red,
+                                    size: 30,
+                                  ))
+                            ],
+                          ),
                           content: Container(
-                                             height: 400,
-                          width: MediaQuery.of(context).size.width * 0.9,
-                            child: Column(
-                              children: [
-                                buildForm(TextEditingController(), "Title")
-                              ],
+                            height: 400,
+                            width: MediaQuery.of(context).size.width * 0.9,
+                            child: SingleChildScrollView(
+                              child: buildForm(setState),
                             ),
                           ),
-                          actions: [],
                         );
-                      },
-                    );
-                  },
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text('Adicionar Visita'),
-                      SizedBox(width: 8),
-                      Icon(FontAwesomeIcons.locationDot),
-                    ],
-                  ),
-                )),
-            _DeliveryProcesses(processes: widget.conteudo!.deliveryProcesses),
-          ],
-        ),
-      ),
-    );
-  }
-
-    Widget buildForm(TextEditingController controller, String title) {
-    return Container(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Flexible(
-            child: AppFormField(
-              controller: controller,
-              label: 'Local',
-              suffixIcon: Icon(FontAwesomeIcons.tag),
-            ),
-          ),
-                    Flexible(
-            child: _buildCalendarDialogButton(),
-          ),
-          Flexible(
-            child:     seletorImagens(context)
-),
-Image.memory(base64Decode(img64), height: 150, width: 400,)
+                      });
+                    },
+                  );
+                },
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Adicionar Visita'),
+                    SizedBox(width: 8),
+                    Icon(FontAwesomeIcons.locationDot),
+                  ],
+                ),
+              )),
+          _DeliveryProcesses(processes: visitas),
         ],
       ),
     );
   }
 
-  seletorImagens(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(
-          child: ElevatedButton.icon(
+  Widget buildForm(void Function(void Function()) estado) {
+    return Container(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AppFormField(
+            controller: controllerNome,
+            label: 'Local',
+            suffixIcon: Icon(
+              FontAwesomeIcons.tag,
+              size: 20,
+            ),
+          ),
+          _buildCalendarDialogButton(),
+          Padding(
+            padding: const EdgeInsets.only(top: 20.0),
+            child: GestureDetector(
+              onTap: () async {
+                String newImg64 = await pickSvg();
+                estado(() {
+                  img64 = newImg64;
+                });
+                print(img64);
+              },
+              child: Material(
+                elevation: 2,
+                child: Container(
+                  width: 400,
+                  height: 150,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      img64.isEmpty
+                          ? Column(
+                              children: [
+                                Icon(
+                                  Icons.image_outlined,
+                                  size: 40,
+                                ),
+                                Text('Anexar Imagem'),
+                              ],
+                            )
+                          : Image.memory(
+                              base64Decode(img64),
+                              height: 150,
+                              width: 400,
+                              fit: BoxFit
+                                  .cover, // Define o modo de ajuste para cobrir o espaço
+                            ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: 14),
+          ElevatedButton(
             style: ElevatedButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 64),
-              backgroundColor:
-                  theme.primaryColor,
+              backgroundColor: theme.primaryColor,
             ),
-            icon: const Icon(Icons.image, size: 32),
             onPressed: () {
-              _pickSvg();
+              if (visitas.isNotEmpty) {
+                visitas.removeLast();
+              }
+
+              setState(() {
+                visitas.add(DeliveryProcess(controllerNome.text, messages: [
+                  Text(
+                    controllerData.text,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 12.0),
+                    child: Image.memory(
+                      base64Decode(img64),
+                      height: 150,
+                      width: 200,
+                      fit: BoxFit.cover, // D
+                      // Define o modo de ajuste para cobrir o espaço
+                    ),
+                  ),
+                ]));
+                visitas.add(DeliveryProcess.complete());
+              });
             },
-            label: const Text('Anexar Imagem'),
+            child: const Text('Adicionar'),
           ),
-        ),
+        ],
+      ),
     );
   }
 
-  _pickSvg() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-        type: FileType.image,
-      );
-
-      if (result != null) {
-        // print(result.files.single.path);
-    //    setState(() {
-  List<io.File> files = result.paths.map((path) => io.File(path ?? '')).toList();
-  print(files);
-final bytes = io.File(files[0].path).readAsBytesSync();
-
-setState(() {
-img64 = base64Encode(bytes);
-  print(img64);
-
-});
-    //    });%
-      }
-  }
-
-    _buildCalendarDialogButton() {
+  _buildCalendarDialogButton() {
     const dayTextStyle =
         TextStyle(color: Colors.black, fontWeight: FontWeight.normal);
     final weekendTextStyle =
@@ -267,12 +312,15 @@ img64 = base64Encode(bytes);
         Flexible(
           child: AppFormField(
             label: 'Data',
-            suffixIcon: Icon(Icons.calendar_month_outlined),
+            suffixIcon: Icon(
+              Icons.calendar_month_outlined,
+              size: 20,
+            ),
             readOnly: true,
             enabled: false,
             controller: controllerData,
             onTap: () async {
-           final values = await showCalendarDatePicker2Dialog(
+              final values = await showCalendarDatePicker2Dialog(
                 context: context,
                 config: config,
                 dialogSize: const Size(325, 400),
@@ -283,8 +331,8 @@ img64 = base64Encode(bytes);
               if (values != null) {
                 setState(() {
                   _dialogCalendarPickerValue = values;
-                                  controllerData.text = _getValueText(config.calendarType, _dialogCalendarPickerValue);
-
+                  controllerData.text = _getValueText(
+                      config.calendarType, _dialogCalendarPickerValue);
                 });
               }
             },
@@ -293,55 +341,26 @@ img64 = base64Encode(bytes);
       ],
     );
   }
-    String _getValueText(
-  CalendarDatePicker2Type datePickerType,
-  List<DateTime?> values,
-) {
-  values = values.map((e) => e != null ? DateUtils.dateOnly(e) : null).toList();
-  var valueText = (values.isNotEmpty ? values[0] : null)
-      .toString()
-      .replaceAll('00:00:00.000', '');
 
-  if (values.isNotEmpty) {
-    final startDate = DateFormat('dd/MM/yyyy').format(values[0]!);
+  String _getValueText(
+    CalendarDatePicker2Type datePickerType,
+    List<DateTime?> values,
+  ) {
+    values =
+        values.map((e) => e != null ? DateUtils.dateOnly(e) : null).toList();
+    var valueText = (values.isNotEmpty ? values[0] : null)
+        .toString()
+        .replaceAll('00:00:00.000', '');
 
+    if (values.isNotEmpty) {
+      final startDate = DateFormat('dd/MM/yyyy').format(values[0]!);
 
-    valueText = startDate;
-  } else {
-    return 'null';
-  }
+      valueText = startDate;
+    } else {
+      return 'null';
+    }
 
-  return valueText;
-}
-}
-
-class _OrderTitle extends StatelessWidget {
-  const _OrderTitle({
-    Key? key,
-    required this.orderInfo,
-  }) : super(key: key);
-
-  final OrderInfo orderInfo;
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Text(
-          'Minhas Visitas',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        Spacer(),
-          Text(
-            '${orderInfo.date.day}/${orderInfo.date.month}/${orderInfo.date.year}',
-            style: TextStyle(
-              color: Color(0xffb6b2b2),
-            ),
-        ),
-      ],
-    );
+    return valueText;
   }
 }
 
@@ -350,7 +369,7 @@ class _InnerTimeline extends StatelessWidget {
     required this.messages,
   });
 
-  final List<dynamic> messages;
+  final List<Widget> messages;
 
   @override
   Widget build(BuildContext context) {
@@ -381,12 +400,13 @@ class _InnerTimeline extends StatelessWidget {
 
             return Padding(
               padding: EdgeInsets.only(left: 8.0),
-              child: Text(messages[index - 1].toString()),
+              child: Container(
+                  width: index == 2 ? 400 : 120,
+                  height: 160,
+                  child: messages[index - 1]),
             );
           },
-          itemExtentBuilder: (_, index) => isEdgeIndex(index) ? 10.0 : 30.0,
-          nodeItemOverlapBuilder: (_, index) =>
-              isEdgeIndex(index) ? true : null,
+          itemExtentBuilder: (_, index) => index == 2 ? 160.0 : 16.0,
           itemCount: messages.length + 2,
         ),
       ),
@@ -403,11 +423,11 @@ class _DeliveryProcesses extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTextStyle(
       style: TextStyle(
-        color: Color(0xff9b9b9b),
-        fontSize: 12.5,
+        color: Color.fromARGB(255, 133, 133, 133),
+        fontSize: 15,
       ),
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal:20.0, vertical: 5),
+        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
         child: FixedTimeline.tileBuilder(
           theme: TimelineThemeData(
             nodePosition: 0,
@@ -435,8 +455,7 @@ class _DeliveryProcesses extends StatelessWidget {
                     Text(
                       processes[index].tituloVisita,
                       style: DefaultTextStyle.of(context).style.copyWith(
-                            fontSize: 14.0,
-                          ),
+                          fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                     _InnerTimeline(messages: processes[index].messages),
                   ],
@@ -446,7 +465,7 @@ class _DeliveryProcesses extends StatelessWidget {
             indicatorBuilder: (_, index) {
               if (processes[index].isCompleted) {
                 return DotIndicator(
-                  color: Color(0xff66c97f),
+                  color: Color(0xff989898),
                   child: Icon(
                     Icons.check,
                     color: Colors.white,
@@ -460,13 +479,11 @@ class _DeliveryProcesses extends StatelessWidget {
               }
             },
             connectorBuilder: (_, index, ___) => SolidLineConnector(
-              color: processes[index].isCompleted ? Color(0xff66c97f) : null,
+              color: processes[index].isCompleted ? Color(0xff989898) : null,
             ),
           ),
         ),
       ),
     );
   }
-
-
 }
