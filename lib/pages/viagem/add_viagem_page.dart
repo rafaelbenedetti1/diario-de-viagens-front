@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class AddViagemPage extends StatefulWidget {
   const AddViagemPage({super.key});
@@ -210,27 +211,24 @@ class _AddViagemPageState extends State<AddViagemPage> {
                                   ),
                                 ],
                               )),
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: ElevatedButton(
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: theme.primaryColor,
-                                  fixedSize: Size(230, 40)),
-                              onPressed: () async {
-                                List<String> newImg64 =
-                                    await pickSvg(allowMultiple: true);
-                                setState(() {
-                                  imagensSelecionadas.addAll(newImg64);
-                                });
-                              },
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text('Adicionar Imagens'),
-                                  SizedBox(width: 8),
-                                  Icon(Icons.add_a_photo_outlined),
-                                ],
-                              ),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                                backgroundColor: theme.primaryColor,
+                                fixedSize: Size(230, 40)),
+                            onPressed: () async {
+                              List<String> newImg64 =
+                                  await pickSvg(allowMultiple: true);
+                              setState(() {
+                                imagensSelecionadas.addAll(newImg64);
+                              });
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text('Adicionar Imagens'),
+                                SizedBox(width: 8),
+                                Icon(Icons.add_a_photo_outlined),
+                              ],
                             ),
                           ),
                           Padding(
@@ -308,6 +306,64 @@ class _AddViagemPageState extends State<AddViagemPage> {
                                     )
                                     .toList()),
                           ),
+                          Divider(height: 2),
+                          Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Avaliação da Viagem',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  Icon(
+                                    Icons.star_border,
+                                    color: theme.primaryColor,
+                                    size: 35,
+                                  ),
+                                ],
+                              )),
+                          RatingBar.builder(
+                            initialRating: 3,
+                            itemCount: 5,
+                            itemBuilder: (context, index) {
+                              switch (index) {
+                                case 0:
+                                  return Icon(
+                                    Icons.sentiment_very_dissatisfied_outlined,
+                                    color: Colors.red,
+                                  );
+                                case 1:
+                                  return Icon(
+                                    Icons.sentiment_dissatisfied_outlined,
+                                    color: Colors.redAccent,
+                                  );
+                                case 2:
+                                  return Icon(
+                                    Icons.sentiment_neutral,
+                                    color: Colors.amber,
+                                  );
+                                case 3:
+                                  return Icon(
+                                    Icons.sentiment_satisfied_alt,
+                                    color: Colors.lightGreen,
+                                  );
+                                case 4:
+                                  return Icon(
+                                    Icons.sentiment_very_satisfied,
+                                    color: Colors.green,
+                                  );
+                              }
+                              return Container();
+                            },
+                            onRatingUpdate: (rating) {
+                              print(rating);
+                            },
+                            itemPadding: EdgeInsets.symmetric(horizontal: 4),
+                          )
                         ],
                       ),
                     ),

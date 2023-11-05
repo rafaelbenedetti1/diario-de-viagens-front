@@ -46,55 +46,52 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                   ),
                 ],
               )),
-          Padding(
-              padding: EdgeInsets.all(20),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    backgroundColor: theme.primaryColor,
-                    fixedSize: Size(230, 40)),
-                onPressed: () async {
-                  showDialog(
-                    barrierDismissible: false,
-                    context: context,
-                    builder: (BuildContext context) {
-                      return StatefulBuilder(builder: (context, setState) {
-                        return AlertDialog(
-                          title: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text("Adicionar Visita"),
-                              IconButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  icon: Icon(
-                                    Icons.close,
-                                    color: Colors.red,
-                                    size: 30,
-                                  ))
-                            ],
-                          ),
-                          content: Container(
-                            height: 400,
-                            width: MediaQuery.of(context).size.width * 0.9,
-                            child: SingleChildScrollView(
-                              child: buildForm(setState),
-                            ),
-                          ),
-                        );
-                      });
-                    },
-                  );
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(
+                backgroundColor: theme.primaryColor, fixedSize: Size(230, 40)),
+            onPressed: () async {
+              showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (BuildContext context) {
+                  return StatefulBuilder(builder: (context, setState) {
+                    return AlertDialog(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text("Adicionar Visita"),
+                          IconButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                              icon: Icon(
+                                Icons.close,
+                                color: Colors.red,
+                                size: 30,
+                              ))
+                        ],
+                      ),
+                      content: Container(
+                        height: 400,
+                        width: MediaQuery.of(context).size.width * 0.9,
+                        child: SingleChildScrollView(
+                          child: buildForm(setState),
+                        ),
+                      ),
+                    );
+                  });
                 },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text('Adicionar Visita'),
-                    SizedBox(width: 8),
-                    Icon(FontAwesomeIcons.locationDot),
-                  ],
-                ),
-              )),
+              );
+            },
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('Adicionar Visita'),
+                SizedBox(width: 8),
+                Icon(FontAwesomeIcons.locationDot),
+              ],
+            ),
+          ),
           _DeliveryProcesses(processes: visitas),
         ],
       ),
