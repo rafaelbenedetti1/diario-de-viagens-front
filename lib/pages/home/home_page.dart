@@ -1,9 +1,6 @@
 import 'package:diario_viagens_front/components/form_field.dart';
-import 'package:diario_viagens_front/pages/cadastro/cadastro_page.dart';
-import 'package:diario_viagens_front/pages/viagem/add_viagem_page.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});

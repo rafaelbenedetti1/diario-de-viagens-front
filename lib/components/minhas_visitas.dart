@@ -46,7 +46,6 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                   ),
                 ],
               )),
-          Divider(height: 1.0),
           Padding(
               padding: EdgeInsets.all(20),
               child: ElevatedButton(
@@ -120,7 +119,7 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
             padding: const EdgeInsets.only(top: 20.0),
             child: GestureDetector(
               onTap: () async {
-                String newImg64 = await pickSvg();
+                String newImg64 = await pickSvg(allowMultiple: false);
                 estado(() {
                   img64 = newImg64;
                 });

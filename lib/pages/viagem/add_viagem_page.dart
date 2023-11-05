@@ -4,7 +4,7 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:diario_viagens_front/components/form_field.dart';
 import 'package:diario_viagens_front/components/info_timeline.dart';
 import 'package:diario_viagens_front/components/pick_svg.dart';
-import 'package:diario_viagens_front/pages/home/mesma.dart';
+import 'package:diario_viagens_front/components/minhas_visitas.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -20,6 +20,7 @@ class AddViagemPage extends StatefulWidget {
 
 String img64 = '';
 List<DateTime?> _dialogCalendarPickerValue = [];
+List<String> imagensSelecionadas = [];
 
 class _AddViagemPageState extends State<AddViagemPage> {
   @override
@@ -187,7 +188,126 @@ class _AddViagemPageState extends State<AddViagemPage> {
                             ],
                           ),
                           _botaoDataInicioFim(),
+                          Divider(height: 2),
                           MinhasVisitas(),
+                          Divider(height: 2),
+                          Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    'Minhas Imagens',
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600),
+                                  ),
+                                  Icon(
+                                    Icons.camera_alt_outlined,
+                                    color: theme.primaryColor,
+                                    size: 35,
+                                  ),
+                                ],
+                              )),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: theme.primaryColor,
+                                  fixedSize: Size(230, 40)),
+                              onPressed: () async {
+                                List<String> newImg64 =
+                                    await pickSvg(allowMultiple: true);
+                                setState(() {
+                                  imagensSelecionadas.addAll(newImg64);
+                                });
+                              },
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text('Adicionar Imagens'),
+                                  SizedBox(width: 8),
+                                  Icon(Icons.add_a_photo_outlined),
+                                ],
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: GridView.count(
+                                shrinkWrap: true,
+                                // horizontal, this produces 2 rows.
+                                crossAxisCount: 2,
+                                children: imagensSelecionadas
+                                    .map(
+                                      (e) => Padding(
+                                        padding: EdgeInsets.all(10),
+                                        child: Container(
+                                          height: 170,
+                                          width: 170,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                              color: Color.fromARGB(
+                                                  255, 226, 226, 226)),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(8.0),
+                                              child: Stack(
+                                                children: [
+                                                  Image.memory(
+                                                    base64Decode(e),
+                                                    height: 170,
+                                                    width: double.infinity,
+                                                    fit: BoxFit
+                                                        .cover, // Define o modo de ajuste para cobrir o espaço
+                                                  ),
+                                                  Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.end,
+                                                      children: [
+                                                        IconButton(
+                                                          onPressed: () {
+                                                            setState(() {
+                                                              imagensSelecionadas
+                                                                  .removeWhere(
+                                                                      (element) =>
+                                                                          element ==
+                                                                          e);
+                                                            });
+                                                          },
+                                                          icon: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            child: Icon(
+                                                              Icons.delete,
+                                                              size: 25,
+                                                              color:
+                                                                  Colors.white,
+                                                            ),
+                                                            decoration:
+                                                                new BoxDecoration(
+                                                              color: Color
+                                                                  .fromARGB(116,
+                                                                      0, 0, 0),
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ]),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    )
+                                    .toList()),
+                          ),
                         ],
                       ),
                     ),
@@ -200,11 +320,10 @@ class _AddViagemPageState extends State<AddViagemPage> {
   }
 
   Future<void> selecionaImagem() async {
-    String newImg64 = await pickSvg();
+    String newImg64 = await pickSvg(allowMultiple: false);
     setState(() {
       img64 = newImg64;
     });
-    print(img64);
   }
 
   _botaoDataInicioFim() {
