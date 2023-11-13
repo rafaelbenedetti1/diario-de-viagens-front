@@ -1,9 +1,38 @@
+import 'dart:convert';
+
+import 'package:diario_viagens_front/clients/viagem_client.dart';
+import 'package:diario_viagens_front/components/common_view.dart';
 import 'package:diario_viagens_front/components/form_field.dart';
+import 'package:diario_viagens_front/model/viagem.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  List<Viagem> viagens = [];
+
+  @override
+  void initState() {
+    _initVariables();
+    super.initState();
+  }
+
+  _initVariables() async {
+    var retorno = await _buscarViagens();
+
+    setState(() {
+      viagens.addAll(retorno.viagens);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -30,14 +59,14 @@ class HomePage extends StatelessWidget {
             AppFormField(
               label: 'Buscar Viagens',
               hint: 'Cidade/País',
-              suffixIcon: Icon(
+              suffixIcon: const Icon(
                 Icons.search,
                 size: 35,
               ),
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: 6,
+                itemCount: viagens.length,
                 itemBuilder: (context, index) {
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 6),
@@ -58,8 +87,8 @@ class HomePage extends StatelessWidget {
                           children: [
                             ClipRRect(
                               borderRadius: BorderRadius.circular(20),
-                              child: Image.network(
-                                'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8fA%3D%3D&w=1000&q=80',
+                              child: Image.memory(
+                                base64Decode(viagens[index].imagemCapa),
                                 width: 170,
                                 height: double
                                     .infinity, // Defina a largura desejada aqui
@@ -67,46 +96,47 @@ class HomePage extends StatelessWidget {
                                     .cover, // Ajusta a imagem ao tamanho do ClipRRect
                               ),
                             ),
-                            const Expanded(
+                            Expanded(
                               child: Column(
                                 children: [
                                   Padding(
-                                    padding: EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.all(8.0),
                                     child: Row(
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Row(
                                           children: [
-                                            Icon(
+                                            const Icon(
                                               Icons.location_city_rounded,
                                               size: 30,
                                             ),
-                                            Text('Londres',
-                                                style: TextStyle(
+                                            Text(
+                                                viagens[index]
+                                                    .localizacao!
+                                                    .cidade,
+                                                style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     fontSize: 18)),
                                           ],
                                         ),
-                                        Icon(
-                                          Icons.favorite,
-                                          color: Colors.red,
-                                        ),
+                                        verificaIcone(viagens[index].avaliacao!)
                                       ],
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(top: 0, left: 10),
+                                    padding:
+                                        const EdgeInsets.only(top: 0, left: 10),
                                     child: Row(
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.location_on_outlined,
                                           size: 25,
                                           color: Color.fromARGB(
                                               255, 145, 145, 145),
                                         ),
-                                        Text('Inglaterra',
-                                            style: TextStyle(
+                                        Text(viagens[index].localizacao!.pais,
+                                            style: const TextStyle(
                                                 color: Color.fromARGB(
                                                     255, 145, 145, 145),
                                                 fontWeight: FontWeight.w500,
@@ -115,17 +145,18 @@ class HomePage extends StatelessWidget {
                                     ),
                                   ),
                                   Padding(
-                                    padding: EdgeInsets.only(top: 8, left: 10),
+                                    padding:
+                                        const EdgeInsets.only(top: 8, left: 10),
                                     child: Row(
                                       children: [
-                                        Icon(
+                                        const Icon(
                                           Icons.calendar_month,
                                           size: 25,
                                           color: Color.fromARGB(
                                               255, 145, 145, 145),
                                         ),
-                                        Text('29/02/2023',
-                                            style: TextStyle(
+                                        Text(viagens[index].dataInicio!,
+                                            style: const TextStyle(
                                                 color: Color.fromARGB(
                                                     255, 145, 145, 145),
                                                 fontWeight: FontWeight.w500,
@@ -148,5 +179,48 @@ class HomePage extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  verificaIcone(double avaliacao) {
+    switch (avaliacao) {
+      case 1:
+        return const Icon(
+          Icons.sentiment_very_dissatisfied_outlined,
+          color: Colors.red,
+        );
+      case 2:
+        return const Icon(
+          Icons.sentiment_dissatisfied_outlined,
+          color: Colors.redAccent,
+        );
+      case 3:
+        return const Icon(
+          Icons.sentiment_neutral,
+          color: Colors.amber,
+        );
+      case 4:
+        return const Icon(
+          Icons.sentiment_satisfied_alt,
+          color: Colors.lightGreen,
+        );
+      case 5:
+        return const Icon(
+          Icons.sentiment_very_satisfied,
+          color: Colors.green,
+        );
+    }
+  }
+
+  _buscarViagens() async {
+    try {
+      return await ViagemClient()
+          .buscarViagens(_auth.currentUser!.displayName!);
+    } catch (e) {
+      snackWarning(
+          text: "Erro no servidor ao processar requisição",
+          cor: ThemeApp.orange,
+          scaffoldMessengerKey: ScaffoldMessenger.of(context),
+        );
+    }
   }
 }

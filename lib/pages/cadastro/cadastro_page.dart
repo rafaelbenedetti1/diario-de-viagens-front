@@ -168,14 +168,13 @@ class _CadastroPageState extends State<CadastroPage> {
         snackWarning(
             text: e.message,
             scaffoldMessengerKey: ScaffoldMessenger.of(context),
-            duration: Duration(seconds: 4),
             cor: ThemeApp.orange);
             _controllerEmail.clear();
             _controllerPassword.clear();
             _focusNodeEmail.requestFocus();
       }
     } else {
-      snackWarning(text: 'Preencha todos os campos para realizar o cadastro.', scaffoldMessengerKey: ScaffoldMessenger.of(context), cor: ThemeApp.orange, duration: Duration(seconds: 4));
+      snackWarning(text: 'Preencha todos os campos para realizar o cadastro.', scaffoldMessengerKey: ScaffoldMessenger.of(context), cor: ThemeApp.orange);
     }
   }
 }

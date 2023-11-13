@@ -3,7 +3,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class AuthService extends ChangeNotifier {
-  FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   User? user;
   bool isLoading = true;
 
@@ -16,35 +16,33 @@ class AuthService extends ChangeNotifier {
       user = userReturn;
       isLoading = false;
       notifyListeners();
-     });
+    });
   }
 
-  register(String email, String senha, String nome) async{
+  register(String email, String senha, String nome) async {
     try {
       await _auth.createUserWithEmailAndPassword(email: email, password: senha);
       _getUser();
       _saveUsername(nome);
-
     } on FirebaseAuthException catch (e) {
-      if(e.code == 'weak-password') {
+      if (e.code == 'weak-password') {
         throw AuthException('A Senha deve conter no mínimo 6 caracteres');
       } else if (e.code == 'email-already-in-use') {
         throw AuthException('Este email já está sendo utilizado');
-      }
-      else if(e.code == "invalid-email") {
+      } else if (e.code == "invalid-email") {
         throw AuthException('Informe um email válido.');
       }
     }
   }
 
-    login(String email, String senha) async{
+  login(String email, String senha) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: senha);
       _getUser();
     } on FirebaseAuthException catch (e) {
-      if(e.code == 'invalid-login-credentials') {
+      if (e.code == 'invalid-login-credentials') {
         throw AuthException('Usuário ou Senha inválidos.');
-      } else if(e.code == "invalid-email") {
+      } else if (e.code == "invalid-email") {
         throw AuthException('Informe um email válido');
       }
     }
@@ -56,18 +54,15 @@ class AuthService extends ChangeNotifier {
   }
 
   _getUser() async {
-    user = _auth.currentUser;    
+    user = _auth.currentUser;
     notifyListeners();
   }
 
   _saveUsername(String nome) async {
-        user = _auth.currentUser;
-      await user?.updateDisplayName(nome);
-
+    user = _auth.currentUser;
+    await user?.updateDisplayName(nome);
   }
 }
-
-
 
 class AuthException implements Exception {
   String message = '';

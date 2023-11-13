@@ -24,6 +24,7 @@ class AppFormField extends StatelessWidget {
   final bool autocorrect;
   final Widget? suffixIcon;
   final bool? readOnly;
+  String? Function(String?)? validator;
 
   AppFormField(
       {this.label,
@@ -33,6 +34,7 @@ class AppFormField extends StatelessWidget {
       this.nextFocus,
       this.isNumber = false,
       this.enabled = true,
+      this.validator,
       this.fadeTextIfDisabled = true,
       this.obsecureText = false,
       this.onTap,
@@ -69,6 +71,7 @@ class AppFormField extends StatelessWidget {
           ),
           padding: EdgeInsets.only(left: 20, right: 8, bottom: 15),
           child: TextFormField(
+            validator: validator,
             readOnly: readOnly ?? false,
             style: TextStyle(
               color: Colors.grey[900],

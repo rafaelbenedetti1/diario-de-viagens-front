@@ -145,7 +145,6 @@ class _LoginPageState extends State<LoginPage> {
       snackWarning(
           text: e.message,
           scaffoldMessengerKey: ScaffoldMessenger.of(context),
-          duration: Duration(seconds: 4),
           cor: ThemeApp.orange);
       _controllerEmail.clear();
       _controllerPassword.clear();
