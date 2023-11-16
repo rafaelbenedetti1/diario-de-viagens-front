@@ -30,6 +30,32 @@ class ViagemClient {
     throw AppException(AppException.levelWarning, ('Erro'));
   }
 
+  Future<bool> excluirViagem(String usuarioId, String viagemId) async {
+    String? mensagemErro;
+    var data ={
+      "usuarioViagemId": usuarioId,
+      "viagemId": viagemId
+    };
+
+    var resp = await CommomClient.postRequest(
+      "${DotEnv.dotenv.env['BACKEND_URL_BASE']!}/api/v1/viagem/excluir",
+      data,
+      '',
+      timeout: Duration(seconds: 30),
+    );
+    if (resp.statusCode == 200) {
+      var jsonToken = json.decode(utf8.decode(resp.bodyBytes));
+      ResponseRequest rr = ResponseRequest.fromJson(jsonToken);
+      if (rr.statusCode == 200) {
+        return rr.data;
+      }
+      mensagemErro = rr.getMensagens();
+    } else {
+      CommomClient.tratarRetornoHTTP(resp.statusCode);
+    }
+    throw AppException(AppException.levelWarning, ('Erro'));
+  }
+
   Future<UsuarioViagem> buscarViagens(String usuario) async {
     String? mensagemErro;
 
