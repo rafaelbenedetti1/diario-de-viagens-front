@@ -3,6 +3,9 @@ class UsuarioViagem {
   String usuario = '';
   List<Viagem> viagens = [];
 
+
+  UsuarioViagem();
+
   UsuarioViagem.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     usuario = json['usuario'];

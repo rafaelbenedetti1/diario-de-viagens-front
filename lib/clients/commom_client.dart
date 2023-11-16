@@ -11,7 +11,7 @@ class CommomClient {
       headers['Authorization'] = 'bearer $token';
     }
 
-    http.Response response = await http.get(Uri.parse(url), headers: headers).timeout(timeout);
+    http.Response response = await http.get(Uri.parse(url), headers: headers);
     return response;
   }
 
@@ -26,7 +26,7 @@ class CommomClient {
       if (token != null) {
         headers['Authorization'] = "Bearer $token";
       }
-      http.Response response = await http.post(Uri.parse(url), body: body, headers: headers).timeout(timeout);
+      http.Response response = await http.post(Uri.parse(url), body: body, headers: headers);
       return response;
     
   }

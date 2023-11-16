@@ -36,7 +36,26 @@ class ViagemClient {
     var resp = await CommomClient.getRequest(
       "${DotEnv.dotenv.env['BACKEND_URL_BASE']!}/api/v1/viagem/$usuario",
       '',
-      timeout: Duration(seconds: 30),
+    );
+    if (resp.statusCode == 200) {
+      var jsonToken = json.decode(utf8.decode(resp.bodyBytes));
+      ResponseRequest rr = ResponseRequest.fromJson(jsonToken);
+      if (rr.statusCode == 200) {
+        return UsuarioViagem.fromJson(rr.data);
+      }
+      mensagemErro = rr.getMensagens();
+    } else {
+      CommomClient.tratarRetornoHTTP(resp.statusCode);
+    }
+    throw AppException(AppException.levelWarning, ('Erro'));
+  }
+
+  Future<UsuarioViagem> buscarViagem(String usuario, String viagemId) async {
+    String? mensagemErro;
+
+    var resp = await CommomClient.getRequest(
+      "${DotEnv.dotenv.env['BACKEND_URL_BASE']!}/api/v1/viagem/$usuario",
+      '',
     );
     if (resp.statusCode == 200) {
       var jsonToken = json.decode(utf8.decode(resp.bodyBytes));

@@ -1,6 +1,7 @@
 import 'package:diario_viagens_front/mobx/visitas_mobx.dart';
 import 'package:diario_viagens_front/pages/home/main_page.dart';
-import 'package:diario_viagens_front/pages/login/login_page.dart';
+import 'package:diario_viagens_front/pages/auth/login/login_page.dart';
+import 'package:diario_viagens_front/pages/viagem/visualizar/visualizar_viagem.page.dart';
 import 'package:diario_viagens_front/services/auth_service.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -40,6 +41,10 @@ class MainApp extends StatelessWidget {
         supportedLocales: const [
           Locale('pt', 'BR'),
         ],
+        routes: {
+              // When navigating to the "/" route, build the FirstScreen widget.
+    '/visualizarViagem': (context) =>  VisualizarViagemPage(viagem: null,),
+        },
         home: Consumer<AuthService>(
           builder: (context, provider, child) {
             if (provider.isLoading) {

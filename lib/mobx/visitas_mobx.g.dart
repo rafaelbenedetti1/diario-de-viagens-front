@@ -29,11 +29,11 @@ mixin _$VisitasMobx on _VisitasMobx, Store {
       ActionController(name: '_VisitasMobx', context: context);
 
   @override
-  dynamic adicionaVisita(Visita visita) {
+  dynamic adicionaVisita(List<Visita> newList) {
     final _$actionInfo = _$_VisitasMobxActionController.startAction(
         name: '_VisitasMobx.adicionaVisita');
     try {
-      return super.adicionaVisita(visita);
+      return super.adicionaVisita(newList);
     } finally {
       _$_VisitasMobxActionController.endAction(_$actionInfo);
     }

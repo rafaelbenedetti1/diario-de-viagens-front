@@ -11,5 +11,5 @@ abstract class _VisitasMobx with Store {
   List<Visita> visitas = [];
   
   @action
-  adicionaVisita(Visita visita) => visitas.add(visita);
+  adicionaVisita(List<Visita> newList ) => visitas = newList;
 }

@@ -4,28 +4,31 @@ import 'package:calendar_date_picker2/calendar_date_picker2.dart';
 import 'package:diario_viagens_front/clients/viagem_client.dart';
 import 'package:diario_viagens_front/components/common_view.dart';
 import 'package:diario_viagens_front/components/form_field.dart';
-import 'package:diario_viagens_front/components/pick_svg.dart';
 import 'package:diario_viagens_front/components/minhas_visitas.dart';
+import 'package:diario_viagens_front/components/pick_svg.dart';
 import 'package:diario_viagens_front/mobx/visitas_mobx.dart';
 import 'package:diario_viagens_front/model/viagem.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
-class AddViagemPage extends StatefulWidget {
-  const AddViagemPage({super.key});
+class VisualizarViagemPage extends StatefulWidget {
+   String usuario = '';
+   Viagem? viagem;
+   VisualizarViagemPage({super.key, required this.viagem});
 
   @override
-  State<AddViagemPage> createState() => _AddViagemPageState();
+  State<VisualizarViagemPage> createState() => _VisualizarViagemPageState();
 }
 
-class _AddViagemPageState extends State<AddViagemPage> {
+class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
+
   String img64 = '';
   List<DateTime?> _dialogCalendarPickerValue = [];
   List<String> imagensSelecionadas = [];
@@ -37,6 +40,29 @@ class _AddViagemPageState extends State<AddViagemPage> {
   String dataFim = '';
   final FirebaseAuth _auth = FirebaseAuth.instance;
   double? avaliacao;
+
+  @override
+  void initState() {
+    _preencheViagem();
+    super.initState();
+  }
+
+  _preencheViagem() async {
+    controllerPais.text = widget.viagem?.localizacao?.pais ?? '';
+    controllerEstado.text = widget.viagem?.localizacao?.estado ?? '';
+    controllerCidade.text = widget.viagem?.localizacao?.cidade ?? '';
+    img64 = widget.viagem?.imagemCapa ?? '';
+    dataFim = widget.viagem?.dataFim ?? '';
+    dataInicio = widget.viagem?.dataInicio ?? '';
+    widget.viagem?.imagens.forEach((element) {
+      imagensSelecionadas.add(element);
+    });
+    final formato = DateFormat('dd/MM/yyyy', 'pt_BR');
+    _dialogCalendarPickerValue.add((formato.parse(widget.viagem?.dataInicio ?? '')));
+    _dialogCalendarPickerValue.add(formato.parse(widget.viagem?.dataFim ?? ''));
+    avaliacao = widget.viagem?.avaliacao;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Observer(builder: (context) {
@@ -50,6 +76,12 @@ class _AddViagemPageState extends State<AddViagemPage> {
           }),
           appBar: AppBar(
             toolbarHeight: 55,
+                    leading: BackButton(
+          onPressed: () {
+            Navigator.pop(context, true);
+
+          }
+        ),
             backgroundColor: theme.primaryColor,
             centerTitle: true,
             title: Image.asset(
@@ -216,7 +248,7 @@ class _AddViagemPageState extends State<AddViagemPage> {
                             ),
                             _botaoDataInicioFim(),
                             const Divider(height: 2),
-                            MinhasVisitas(),
+                            MinhasVisitas(visitasViagem: widget.viagem!.visitas ),
                             const Divider(height: 2),
                             Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -358,7 +390,7 @@ class _AddViagemPageState extends State<AddViagemPage> {
                                   ],
                                 )),
                             RatingBar.builder(
-                              initialRating: 3,
+                              initialRating: avaliacao ?? 3,
                               itemCount: 5,
                               itemBuilder: (context, index) {
                                 switch (index) {
@@ -601,6 +633,7 @@ class _AddViagemPageState extends State<AddViagemPage> {
 
   _gravar(List<Visita> visitas) async {
     var viagem = Viagem(
+      id: widget.viagem?.id,
         visitas: visitas,
         imagemCapa: img64,
         dataInicio: dataInicio,
@@ -615,7 +648,7 @@ class _AddViagemPageState extends State<AddViagemPage> {
       var resultado = await ViagemClient()
           .inserirViagem(_auth.currentUser!.displayName!, viagem);
       snackWarning(
-          text: "Viagem criada com sucesso!",
+          text: "Viagem atualizada com sucesso!",
           cor: ThemeApp.green,
           scaffoldMessengerKey: ScaffoldMessenger.of(context),
             );      // BlocProvider.getBloc<ReloadBloc>().update();
