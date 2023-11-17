@@ -112,125 +112,128 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                                   ))
                             ],
                           ),
-                          content: Container(
-                            height: 400,
-                            width: MediaQuery.of(context).size.width * 0.9,
-                            child: SingleChildScrollView(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  AppFormField(
-                                    controller: controllerNome,
-                                    label: 'Local',
-                                    suffixIcon: Icon(
-                                      FontAwesomeIcons.tag,
-                                      size: 20,
+                          content: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 400,
+                              width: MediaQuery.of(context).size.width * 0.9,
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    AppFormField(
+                                      controller: controllerNome,
+                                      label: 'Local',
+                                      suffixIcon: Icon(
+                                        FontAwesomeIcons.tag,
+                                        size: 20,
+                                      ),
                                     ),
-                                  ),
-                                  _buildCalendarDialogButton(),
-                                  Padding(
-                                    padding: const EdgeInsets.only(top: 20.0),
-                                    child: GestureDetector(
-                                      onTap: () async {
-                                        String? newImg64 =
-                                            await pickSvg(allowMultiple: false);
-                                        setState(() {
-                                          img64 = newImg64 ?? '';
-                                        });
-                                        print(img64);
-                                      },
-                                      child: Material(
-                                        elevation: 2,
-                                        child: Container(
-                                          width: 400,
-                                          height: 150,
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            children: [
-                                              img64.isEmpty
-                                                  ? Column(
-                                                      children: [
-                                                        Icon(
-                                                          Icons.image_outlined,
-                                                          size: 40,
-                                                        ),
-                                                        Text('Anexar Imagem'),
-                                                      ],
-                                                    )
-                                                  : Image.memory(
-                                                      base64Decode(img64),
-                                                      height: 150,
-                                                      width: 400,
-                                                      fit: BoxFit
-                                                          .cover, // Define o modo de ajuste para cobrir o espaço
-                                                    ),
-                                            ],
+                                    _buildCalendarDialogButton(),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 20.0),
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          String? newImg64 =
+                                              await pickSvg(allowMultiple: false);
+                                          setState(() {
+                                            img64 = newImg64 ?? '';
+                                          });
+                                          print(img64);
+                                        },
+                                        child: Material(
+                                          elevation: 2,
+                                          child: Container(
+                                            width: 400,
+                                            height: 150,
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                img64.isEmpty
+                                                    ? Column(
+                                                        children: [
+                                                          Icon(
+                                                            Icons.image_outlined,
+                                                            size: 40,
+                                                          ),
+                                                          Text('Anexar Imagem'),
+                                                        ],
+                                                      )
+                                                    : Image.memory(
+                                                        base64Decode(img64),
+                                                        height: 150,
+                                                        width: 400,
+                                                        fit: BoxFit
+                                                            .cover, // Define o modo de ajuste para cobrir o espaço
+                                                      ),
+                                              ],
+                                            ),
                                           ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  SizedBox(height: 14),
-                                  ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 64),
-                                      backgroundColor: theme.primaryColor,
-                                    ),
-                                    onPressed: () {
-                                      if (controllerData.text.isNotEmpty &&
-                                          controllerNome.text.isNotEmpty &&
-                                          img64.isNotEmpty) {
-                                        if (visitas.value.isNotEmpty) {
-                                          visitas.value.removeLast();
-                                        }
-
-                                        setState(() {
-                                          var visita = Visita(
-                                              data: controllerData.text,
-                                              imagem: img64,
-                                              nomeLocal: controllerNome.text);
-          
-                                          lista.add(visita);
-                                          visitasMobx.adicionaVisita([...widget.visitasViagem ?? [], ...lista]);
-                                          visitas.value = List.from(visitas.value)..add(DeliveryProcess(
-                                              controllerNome.text,
-                                              messages: [
-                                                Text(
-                                                  controllerData.text,
-                                                ),
-                                                Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 12.0),
-                                                  child: Image.memory(
-                                                    base64Decode(img64),
-                                                    height: 150,
-                                                    width: 200,
-                                                    fit: BoxFit.cover, // D
-                                                    // Define o modo de ajuste para cobrir o espaço
+                                    SizedBox(height: 14),
+                                    ElevatedButton(
+                                      style: ElevatedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 64),
+                                        backgroundColor: theme.primaryColor,
+                                      ),
+                                      onPressed: () {
+                                        if (controllerData.text.isNotEmpty &&
+                                            controllerNome.text.isNotEmpty &&
+                                            img64.isNotEmpty) {
+                                          if (visitas.value.isNotEmpty) {
+                                            visitas.value.removeLast();
+                                          }
+                          
+                                          setState(() {
+                                            var visita = Visita(
+                                                data: controllerData.text,
+                                                imagem: img64,
+                                                nomeLocal: controllerNome.text);
+                                    
+                                            lista.add(visita);
+                                            visitasMobx.adicionaVisita([...widget.visitasViagem ?? [], ...lista]);
+                                            visitas.value = List.from(visitas.value)..add(DeliveryProcess(
+                                                controllerNome.text,
+                                                messages: [
+                                                  Text(
+                                                    controllerData.text,
                                                   ),
-                                                ),
-                                              ]));
-                                          visitas.value = List.from(visitas.value)..add(DeliveryProcess.complete());
-                                          controllerData.clear();
-                                          controllerNome.clear();
-                                          img64 = '';
-                                          Navigator.pop(context);
-                                        });
-                                      } else {
-                                        snackWarning(
-                                            text:
-                                                'Informe o local, data e a imagem da visita.',
-                                            scaffoldMessengerKey:
-                                                ScaffoldMessenger.of(context),
-                                            cor: ThemeApp.orange);
-                                      }
-                                    },
-                                    child: const Text('Adicionar'),
-                                  ),
-                                ],
+                                                  Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 12.0),
+                                                    child: Image.memory(
+                                                      base64Decode(img64),
+                                                      height: 150,
+                                                      width: 200,
+                                                      fit: BoxFit.cover, // D
+                                                      // Define o modo de ajuste para cobrir o espaço
+                                                    ),
+                                                  ),
+                                                ]));
+                                            visitas.value = List.from(visitas.value)..add(DeliveryProcess.complete());
+                                            controllerData.clear();
+                                            controllerNome.clear();
+                                            img64 = '';
+                                            Navigator.pop(context);
+                                          });
+                                        } else {
+                                          snackWarning(
+                                              text:
+                                                  'Informe o local, data e a imagem da visita.',
+                                              scaffoldMessengerKey:
+                                                  ScaffoldMessenger.of(context),
+                                              cor: ThemeApp.orange);
+                                        }
+                                      },
+                                      child: const Text('Adicionar'),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),
@@ -488,65 +491,68 @@ class VisitasWidget extends StatelessWidget {
   final List<DeliveryProcess> processes;
   @override
   Widget build(BuildContext context) {
-    return DefaultTextStyle(
-      style: TextStyle(
-        color: Color.fromARGB(255, 133, 133, 133),
-        fontSize: 15,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
-        child: FixedTimeline.tileBuilder(
-          theme: TimelineThemeData(
-            nodePosition: 0,
-            color: Color(0xff989898),
-            indicatorTheme: IndicatorThemeData(
-              position: 0,
-              size: 20.0,
+    return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: DefaultTextStyle(
+        style: TextStyle(
+          color: Color.fromARGB(255, 133, 133, 133),
+          fontSize: 15,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+          child: FixedTimeline.tileBuilder(
+            theme: TimelineThemeData(
+              nodePosition: 0,
+              color: Color(0xff989898),
+              indicatorTheme: IndicatorThemeData(
+                position: 0,
+                size: 20.0,
+              ),
+              connectorTheme: ConnectorThemeData(
+                thickness: 2.5,
+              ),
             ),
-            connectorTheme: ConnectorThemeData(
-              thickness: 2.5,
-            ),
-          ),
-          builder: TimelineTileBuilder.connected(
-            connectionDirection: ConnectionDirection.before,
-            itemCount: processes.length,
-            contentsBuilder: (_, index) {
-              if (processes[index].isCompleted) return null;
-
-              return Padding(
-                padding: EdgeInsets.only(left: 8.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      processes[index].tituloVisita,
-                      style: DefaultTextStyle.of(context).style.copyWith(
-                          fontSize: 16.0, fontWeight: FontWeight.bold),
-                    ),
-                    _InnerTimeline(messages: processes[index].messages),
-                  ],
-                ),
-              );
-            },
-            indicatorBuilder: (_, index) {
-              if (processes[index].isCompleted) {
-                return DotIndicator(
-                  color: Color(0xff989898),
-                  child: Icon(
-                    Icons.check,
-                    color: Colors.white,
-                    size: 12.0,
+            builder: TimelineTileBuilder.connected(
+              connectionDirection: ConnectionDirection.before,
+              itemCount: processes.length,
+              contentsBuilder: (_, index) {
+                if (processes[index].isCompleted) return null;
+    
+                return Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        processes[index].tituloVisita,
+                        style: DefaultTextStyle.of(context).style.copyWith(
+                            fontSize: 16.0, fontWeight: FontWeight.bold),
+                      ),
+                      _InnerTimeline(messages: processes[index].messages),
+                    ],
                   ),
                 );
-              } else {
-                return OutlinedDotIndicator(
-                  borderWidth: 2.5,
-                );
-              }
-            },
-            connectorBuilder: (_, index, ___) => SolidLineConnector(
-              color: processes[index].isCompleted ? Color(0xff989898) : null,
+              },
+              indicatorBuilder: (_, index) {
+                if (processes[index].isCompleted) {
+                  return DotIndicator(
+                    color: Color(0xff989898),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 12.0,
+                    ),
+                  );
+                } else {
+                  return OutlinedDotIndicator(
+                    borderWidth: 2.5,
+                  );
+                }
+              },
+              connectorBuilder: (_, index, ___) => SolidLineConnector(
+                color: processes[index].isCompleted ? Color(0xff989898) : null,
+              ),
             ),
           ),
         ),
