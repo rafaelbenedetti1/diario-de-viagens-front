@@ -25,6 +25,8 @@ class AppFormField extends StatelessWidget {
   final Widget? suffixIcon;
   final bool? readOnly;
   String? Function(String?)? validator;
+  void Function(String)? onChanged;
+
 
   AppFormField(
       {this.label,
@@ -32,6 +34,7 @@ class AppFormField extends StatelessWidget {
       this.controller,
       this.currentFocus,
       this.nextFocus,
+      this.onChanged,
       this.isNumber = false,
       this.enabled = true,
       this.validator,
@@ -71,6 +74,7 @@ class AppFormField extends StatelessWidget {
           ),
           padding: EdgeInsets.only(left: 20, right: 8, bottom: 15),
           child: TextFormField(
+            onChanged: onChanged,
             validator: validator,
             readOnly: readOnly ?? false,
             style: TextStyle(
