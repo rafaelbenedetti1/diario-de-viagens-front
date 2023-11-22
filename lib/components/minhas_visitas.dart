@@ -9,6 +9,7 @@ import 'package:diario_viagens_front/mobx/visitas_mobx.dart';
 import 'package:diario_viagens_front/model/viagem.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get_it/get_it.dart';
 import 'package:intl/intl.dart';
@@ -27,7 +28,6 @@ class MinhasVisitas extends StatefulWidget {
 
 class _MinhasVisitasState extends State<MinhasVisitas> {
   List<DateTime?> _dialogCalendarPickerValue = [];
-  ValueNotifier<List<DeliveryProcess>> visitas = ValueNotifier<List<DeliveryProcess>>([]);
   List<Visita> lista = [];
   final controllerNome = TextEditingController();
   final controllerData = TextEditingController();
@@ -41,9 +41,12 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
   }
 
   carregaVisitas() {
+    visitasMobx.setVisitas([]);
+    visitasMobx.adicionaVisita([]);
     if (widget.visitasViagem != null) {
+      visitasMobx.adicionaVisita(widget.visitasViagem?? []);
       widget.visitasViagem?.forEach((element) {
-        visitas.value = List.from(visitas.value)..add(DeliveryProcess(element.nomeLocal, messages: [
+        visitasMobx.setVisitas(List.from(visitasMobx.visitasWidget.value)..add(DeliveryProcess(element.nomeLocal, messages: [
           Text(
             element.data,
           ),
@@ -57,9 +60,11 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
               // Define o modo de ajuste para cobrir o espaço
             ),
           ),
-        ]));
+        ])));
       });
-      visitas.value = List.from(visitas.value)..add(DeliveryProcess.complete());
+      visitasMobx.setVisitas( List.from(visitasMobx.visitasWidget.value)..add(DeliveryProcess.complete()));
+    } else {
+      visitasMobx.setVisitas([]);
     }
   }
 
@@ -184,8 +189,8 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                                         if (controllerData.text.isNotEmpty &&
                                             controllerNome.text.isNotEmpty &&
                                             img64.isNotEmpty) {
-                                          if (visitas.value.isNotEmpty) {
-                                            visitas.value.removeLast();
+                                          if (visitasMobx.visitasWidget.value.isNotEmpty) {
+                                            visitasMobx.visitasWidget.value.removeLast();
                                           }
                           
                                           setState(() {
@@ -196,7 +201,7 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                                     
                                             lista.add(visita);
                                             visitasMobx.adicionaVisita([...widget.visitasViagem ?? [], ...lista]);
-                                            visitas.value = List.from(visitas.value)..add(DeliveryProcess(
+                                            visitasMobx.setVisitas( List.from(visitasMobx.visitasWidget.value)..add(DeliveryProcess(
                                                 controllerNome.text,
                                                 messages: [
                                                   Text(
@@ -214,8 +219,8 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                                                       // Define o modo de ajuste para cobrir o espaço
                                                     ),
                                                   ),
-                                                ]));
-                                            visitas.value = List.from(visitas.value)..add(DeliveryProcess.complete());
+                                                ])));
+                                            visitasMobx.setVisitas( List.from(visitasMobx.visitasWidget.value)..add(DeliveryProcess.complete()));
                                             controllerData.clear();
                                             controllerNome.clear();
                                             img64 = '';
@@ -253,10 +258,94 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
               ],
             ),
           ),
-          ValueListenableBuilder(
-            valueListenable: visitas,
-            builder: (context, value, _) {
-              return VisitasWidget(processes: value);
+          Observer(
+            builder: (context) {
+              return ValueListenableBuilder(
+                valueListenable: visitasMobx.visitasWidget,
+                builder: (context, value, _) {
+                  return Padding(
+      padding: const EdgeInsets.only(top: 12.0),
+      child: DefaultTextStyle(
+        style: TextStyle(
+          color: Color.fromARGB(255, 133, 133, 133),
+          fontSize: 15,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
+          child: FixedTimeline.tileBuilder(
+            theme: TimelineThemeData(
+              nodePosition: 0,
+              color: Color(0xff989898),
+              indicatorTheme: IndicatorThemeData(
+                position: 0,
+                size: 20.0,
+              ),
+              connectorTheme: ConnectorThemeData(
+                thickness: 2.5,
+              ),
+            ),
+            builder: TimelineTileBuilder.connected(
+              connectionDirection: ConnectionDirection.before,
+              itemCount: value.length,
+              contentsBuilder: (_, index) {
+                if (value[index].isCompleted) return null;
+    
+                return Padding(
+                  padding: EdgeInsets.only(left: 8.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            value[index].tituloVisita,
+                            style: DefaultTextStyle.of(context).style.copyWith(
+                                fontSize: 16.0, fontWeight: FontWeight.bold),
+                          ),
+                          IconButton(icon: Icon(Icons.delete, color: Colors.red, size: 28), onPressed: () {
+                            setState(() {
+                            value.removeAt(index);
+                            visitasMobx.visitas.removeAt(index);
+                            visitasMobx.setVisitas(value);
+                            visitasMobx.adicionaVisita(visitasMobx.visitas);
+                            });
+               
+                          })
+                        ],
+                      ),
+                      _InnerTimeline(messages: value[index].messages),
+                    ],
+                  ),
+                );
+              },
+              indicatorBuilder: (_, index) {
+                if (value[index].isCompleted) {
+                  return DotIndicator(
+                    color: Color(0xff989898),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 12.0,
+                    ),
+                  );
+                } else {
+                  return OutlinedDotIndicator(
+                    borderWidth: 2.5,
+                  );
+                }
+              },
+              connectorBuilder: (_, index, ___) => SolidLineConnector(
+                color: value[index].isCompleted ? Color(0xff989898) : null,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );;
+                }
+              );
             }
           ),
         ],
@@ -447,115 +536,35 @@ class _InnerTimeline extends StatelessWidget {
       return index == 0 || index == messages.length + 1;
     }
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: FixedTimeline.tileBuilder(
-        theme: TimelineTheme.of(context).copyWith(
-          nodePosition: 0,
-          connectorTheme: TimelineTheme.of(context).connectorTheme.copyWith(
-                thickness: 1.0,
-              ),
-          indicatorTheme: TimelineTheme.of(context).indicatorTheme.copyWith(
-                size: 10.0,
-                position: 0.5,
-              ),
-        ),
-        builder: TimelineTileBuilder(
-          indicatorBuilder: (_, index) =>
-              !isEdgeIndex(index) ? Indicator.widget() : null,
-          contentsBuilder: (_, index) {
-            if (isEdgeIndex(index)) {
-              return null;
-            }
-
-            return Padding(
-              padding: EdgeInsets.only(left: 8.0),
-              child: Container(
-                  width: index == 2 ? 400 : 120,
-                  height: 160,
-                  child: messages[index - 1]),
-            );
-          },
-          itemExtentBuilder: (_, index) => index == 2 ? 160.0 : 16.0,
-          itemCount: messages.length + 2,
-        ),
+    return FixedTimeline.tileBuilder(
+      theme: TimelineTheme.of(context).copyWith(
+        nodePosition: 0,
+        connectorTheme: TimelineTheme.of(context).connectorTheme.copyWith(
+              thickness: 1.0,
+            ),
+        indicatorTheme: TimelineTheme.of(context).indicatorTheme.copyWith(
+              size: 10.0,
+              position: 0.5,
+            ),
       ),
-    );
-  }
-}
+      builder: TimelineTileBuilder(
+        indicatorBuilder: (_, index) =>
+            !isEdgeIndex(index) ? Indicator.widget() : null,
+        contentsBuilder: (_, index) {
+          if (isEdgeIndex(index)) {
+            return null;
+          }
 
-class VisitasWidget extends StatelessWidget {
-  const VisitasWidget({Key? key, required this.processes})
-      : super(key: key);
-
-  final List<DeliveryProcess> processes;
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 12.0),
-      child: DefaultTextStyle(
-        style: TextStyle(
-          color: Color.fromARGB(255, 133, 133, 133),
-          fontSize: 15,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
-          child: FixedTimeline.tileBuilder(
-            theme: TimelineThemeData(
-              nodePosition: 0,
-              color: Color(0xff989898),
-              indicatorTheme: IndicatorThemeData(
-                position: 0,
-                size: 20.0,
-              ),
-              connectorTheme: ConnectorThemeData(
-                thickness: 2.5,
-              ),
-            ),
-            builder: TimelineTileBuilder.connected(
-              connectionDirection: ConnectionDirection.before,
-              itemCount: processes.length,
-              contentsBuilder: (_, index) {
-                if (processes[index].isCompleted) return null;
-    
-                return Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        processes[index].tituloVisita,
-                        style: DefaultTextStyle.of(context).style.copyWith(
-                            fontSize: 16.0, fontWeight: FontWeight.bold),
-                      ),
-                      _InnerTimeline(messages: processes[index].messages),
-                    ],
-                  ),
-                );
-              },
-              indicatorBuilder: (_, index) {
-                if (processes[index].isCompleted) {
-                  return DotIndicator(
-                    color: Color(0xff989898),
-                    child: Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 12.0,
-                    ),
-                  );
-                } else {
-                  return OutlinedDotIndicator(
-                    borderWidth: 2.5,
-                  );
-                }
-              },
-              connectorBuilder: (_, index, ___) => SolidLineConnector(
-                color: processes[index].isCompleted ? Color(0xff989898) : null,
-              ),
-            ),
-          ),
-        ),
+          return Padding(
+            padding: EdgeInsets.only(left: 8.0),
+            child: Container(
+                width: index == 2 ? 400 : 120,
+                height: 160,
+                child: messages[index - 1]),
+          );
+        },
+        itemExtentBuilder: (_, index) => index == 2 ? 160.0 : 16.0,
+        itemCount: messages.length + 2,
       ),
     );
   }

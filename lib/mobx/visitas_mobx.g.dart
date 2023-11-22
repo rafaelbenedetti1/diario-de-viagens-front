@@ -25,6 +25,22 @@ mixin _$VisitasMobx on _VisitasMobx, Store {
     });
   }
 
+  late final _$visitasWidgetAtom =
+      Atom(name: '_VisitasMobx.visitasWidget', context: context);
+
+  @override
+  ValueNotifier<List<DeliveryProcess>> get visitasWidget {
+    _$visitasWidgetAtom.reportRead();
+    return super.visitasWidget;
+  }
+
+  @override
+  set visitasWidget(ValueNotifier<List<DeliveryProcess>> value) {
+    _$visitasWidgetAtom.reportWrite(value, super.visitasWidget, () {
+      super.visitasWidget = value;
+    });
+  }
+
   late final _$_VisitasMobxActionController =
       ActionController(name: '_VisitasMobx', context: context);
 
@@ -40,9 +56,21 @@ mixin _$VisitasMobx on _VisitasMobx, Store {
   }
 
   @override
+  dynamic setVisitas(List<DeliveryProcess> newList) {
+    final _$actionInfo = _$_VisitasMobxActionController.startAction(
+        name: '_VisitasMobx.setVisitas');
+    try {
+      return super.setVisitas(newList);
+    } finally {
+      _$_VisitasMobxActionController.endAction(_$actionInfo);
+    }
+  }
+
+  @override
   String toString() {
     return '''
-visitas: ${visitas}
+visitas: ${visitas},
+visitasWidget: ${visitasWidget}
     ''';
   }
 }

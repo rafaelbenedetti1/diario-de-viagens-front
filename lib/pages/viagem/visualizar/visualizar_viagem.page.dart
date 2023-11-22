@@ -248,7 +248,7 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
                             ),
                             _botaoDataInicioFim(),
                             const Divider(height: 2),
-                            MinhasVisitas(visitasViagem: widget.viagem!.visitas ),
+                            MinhasVisitas(visitasViagem: widget.viagem!.visitas.isEmpty ? null : widget.viagem!.visitas),
                             const Divider(height: 2),
                             Padding(
                                 padding: const EdgeInsets.all(16.0),

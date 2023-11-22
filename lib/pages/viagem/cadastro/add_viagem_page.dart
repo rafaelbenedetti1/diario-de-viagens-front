@@ -43,13 +43,12 @@ class _AddViagemPageState extends State<AddViagemPage> {
       return Scaffold(
           resizeToAvoidBottomInset: false,
           floatingActionButton: FloatingActionButton(
-            backgroundColor: Color.fromARGB(214, 4, 69, 101),
-            child: Icon(Icons.save_outlined, size: 30),
-            onPressed: () {
-            _gravar(visitasMobx.visitas);
-          }),
+              backgroundColor: Color.fromARGB(214, 4, 69, 101),
+              child: Icon(Icons.save_outlined, size: 30),
+              onPressed: () {
+                _gravar(visitasMobx.visitas);
+              }),
           appBar: AppBar(
-            
             toolbarHeight: 55,
             backgroundColor: theme.primaryColor,
             centerTitle: true,
@@ -217,7 +216,9 @@ class _AddViagemPageState extends State<AddViagemPage> {
                             ),
                             _botaoDataInicioFim(),
                             const Divider(height: 2),
-                            MinhasVisitas(visitasViagem: null,),
+                            MinhasVisitas(
+                              visitasViagem: null,
+                            ),
                             const Divider(height: 2),
                             Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -616,15 +617,28 @@ class _AddViagemPageState extends State<AddViagemPage> {
       var resultado = await ViagemClient()
           .inserirViagem(_auth.currentUser!.displayName!, viagem);
       snackWarning(
-          text: "Viagem criada com sucesso!",
-          cor: ThemeApp.green,
-          scaffoldMessengerKey: ScaffoldMessenger.of(context),
-            );      // BlocProvider.getBloc<ReloadBloc>().update();
+        text: "Viagem criada com sucesso!",
+        cor: ThemeApp.green,
+        scaffoldMessengerKey: ScaffoldMessenger.of(context),
+      ); // BlocProvider.getBloc<ReloadBloc>().update();
     } catch (e) {
       snackWarning(
-          text: "Erro no servidor ao processar requisição",
-          cor: ThemeApp.orange,
-          scaffoldMessengerKey: ScaffoldMessenger.of(context),
-);    }
+        text: "Erro no servidor ao processar requisição",
+        cor: ThemeApp.orange,
+        scaffoldMessengerKey: ScaffoldMessenger.of(context),
+      );
+    } finally {
+      setState(() {
+        img64 = '';
+        controllerCidade.clear();
+        controllerEstado.clear();
+        controllerPais.clear();
+        dataFim = '';
+        dataInicio = '';
+        imagensSelecionadas.clear();
+        avaliacao = 3;
+        visitasMobx.setVisitas([]);
+      });
+    }
   }
 }
