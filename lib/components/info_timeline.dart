@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 
 class OrderInfo {
@@ -17,8 +15,8 @@ class DeliveryProcess {
   });
 
   const DeliveryProcess.complete()
-      : this.tituloVisita = 'Done',
-        this.messages = const [];
+      : tituloVisita = 'Done',
+        messages = const [];
 
   final String tituloVisita;
   final List<Widget> messages;

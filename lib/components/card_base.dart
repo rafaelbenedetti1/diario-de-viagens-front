@@ -11,8 +11,9 @@ class CardBase extends StatelessWidget {
   final Color? backgroundColor;
   final Function? onTapCard;
 
-  CardBase(
-      {this.child,
+  const CardBase(
+      {super.key,
+      this.child,
       this.heigth,
       this.width,
       this.horizontalPadding,

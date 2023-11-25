@@ -5,6 +5,7 @@ import 'package:diario_viagens_front/components/card_base.dart';
 import 'package:diario_viagens_front/components/common_view.dart';
 import 'package:diario_viagens_front/components/form_field.dart';
 import 'package:diario_viagens_front/model/viagem.dart';
+import 'package:diario_viagens_front/pages/auth/login/login_page.dart';
 import 'package:diario_viagens_front/pages/viagem/visualizar/visualizar_viagem.page.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -43,6 +44,17 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+            onPressed: () async {
+              await _auth.signOut();
+              print(_auth.currentUser);
+              Navigator.pushReplacement(
+                  context, MaterialPageRoute(builder: (_) => LoginPage()));
+            },
+            icon: const Icon(
+              Icons.logout,
+              size: 30,
+            )),
         elevation: 0,
         toolbarHeight: 55,
         backgroundColor: theme.primaryColor,
@@ -60,16 +72,18 @@ class _HomePageState extends State<HomePage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
+                const Text(
                   'Minhas Viagens',
-                  style: TextStyle(
-                    fontSize: 20
-                  ),
+                  style: TextStyle(fontSize: 20),
                 ),
-                Icon(MdiIcons.airplane, color: theme.primaryColor, size: 50,)
+                Icon(
+                  MdiIcons.airplane,
+                  color: theme.primaryColor,
+                  size: 50,
+                )
               ],
             ),
-            SizedBox(height: 12),
+            const SizedBox(height: 12),
             AppFormField(
               label: 'Buscar Viagens',
               hint: 'Cidade',
@@ -81,7 +95,7 @@ class _HomePageState extends State<HomePage> {
                 _filtraLista(text);
               },
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Expanded(
               child: CardBase(
                 backgroundColor: Colors.white,
@@ -104,8 +118,8 @@ class _HomePageState extends State<HomePage> {
       if (listaFiltrada.isNotEmpty) {
         stack.add(buildListView(lista));
       } else if (notFound) {
-        stack.add(
-            Center(child: Text('Nenhum item encontrado com o filtro atual')));
+        stack.add(const Center(
+            child: Text('Nenhum item encontrado com o filtro atual')));
       } else {
         // Mostra a lista original, pois nenhum filtro está ativo
         stack.add(buildListView(lista));
@@ -121,8 +135,8 @@ class _HomePageState extends State<HomePage> {
                 "assets/images/travel.svg",
                 height: 200,
               ),
-              SizedBox(height: 20),
-              Text(
+              const SizedBox(height: 20),
+              const Text(
                 "Você ainda não possui viagens registradas.",
                 style: TextStyle(color: Colors.grey, fontSize: 16),
               )
@@ -170,7 +184,7 @@ class _HomePageState extends State<HomePage> {
                           cor: ThemeApp.green);
                     }
                   },
-                  backgroundColor: Color(0xFFFE4A49),
+                  backgroundColor: const Color(0xFFFE4A49),
                   foregroundColor: Colors.white,
                   icon: Icons.delete,
                   label: 'Excluir',
@@ -250,7 +264,7 @@ class _HomePageState extends State<HomePage> {
                                       size: 25,
                                       color: Color.fromARGB(255, 145, 145, 145),
                                     ),
-                                    SizedBox(width: 5),
+                                    const SizedBox(width: 5),
                                     Text(lista[index].localizacao!.pais,
                                         style: const TextStyle(
                                             color: Color.fromARGB(

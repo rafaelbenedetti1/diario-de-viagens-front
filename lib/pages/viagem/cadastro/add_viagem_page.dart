@@ -8,6 +8,7 @@ import 'package:diario_viagens_front/components/pick_svg.dart';
 import 'package:diario_viagens_front/components/minhas_visitas.dart';
 import 'package:diario_viagens_front/mobx/visitas_mobx.dart';
 import 'package:diario_viagens_front/model/viagem.dart';
+import 'package:diario_viagens_front/pages/auth/login/login_page.dart';
 import 'package:diario_viagens_front/theme/theme.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -43,12 +44,22 @@ class _AddViagemPageState extends State<AddViagemPage> {
       return Scaffold(
           resizeToAvoidBottomInset: false,
           floatingActionButton: FloatingActionButton(
-              backgroundColor: Color.fromARGB(214, 4, 69, 101),
-              child: Icon(Icons.save_outlined, size: 30),
+              backgroundColor: const Color.fromARGB(214, 4, 69, 101),
+              child: const Icon(Icons.save_outlined, size: 30),
               onPressed: () {
                 _gravar(visitasMobx.visitas);
               }),
           appBar: AppBar(
+            leading: IconButton(
+                onPressed: () async {
+                  await _auth.signOut();
+                  Navigator.pushReplacement(
+                      context, MaterialPageRoute(builder: (_) => LoginPage()));
+                },
+                icon: const Icon(
+                  Icons.logout,
+                  size: 30,
+                )),
             toolbarHeight: 55,
             backgroundColor: theme.primaryColor,
             centerTitle: true,
@@ -102,15 +113,14 @@ class _AddViagemPageState extends State<AddViagemPage> {
                                       icon: Container(
                                         height: 35,
                                         width: 35,
+                                        decoration: const BoxDecoration(
+                                          color: Color.fromARGB(116, 0, 0, 0),
+                                          shape: BoxShape.circle,
+                                        ),
                                         child: const Icon(
                                           Icons.edit,
                                           size: 25,
                                           color: Colors.white,
-                                        ),
-                                        decoration: new BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              116, 0, 0, 0),
-                                          shape: BoxShape.circle,
                                         ),
                                       ),
                                     ),
@@ -123,15 +133,14 @@ class _AddViagemPageState extends State<AddViagemPage> {
                                       icon: Container(
                                         height: 35,
                                         width: 35,
+                                        decoration: const BoxDecoration(
+                                          color: Color.fromARGB(116, 0, 0, 0),
+                                          shape: BoxShape.circle,
+                                        ),
                                         child: const Icon(
                                           Icons.delete,
                                           size: 25,
                                           color: Colors.white,
-                                        ),
-                                        decoration: new BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              116, 0, 0, 0),
-                                          shape: BoxShape.circle,
                                         ),
                                       ),
                                     ),
@@ -310,22 +319,22 @@ class _AddViagemPageState extends State<AddViagemPage> {
                                                             icon: Container(
                                                               height: 35,
                                                               width: 35,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        116,
+                                                                        0,
+                                                                        0,
+                                                                        0),
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
                                                               child: const Icon(
                                                                 Icons.delete,
                                                                 size: 25,
                                                                 color: Colors
                                                                     .white,
-                                                              ),
-                                                              decoration:
-                                                                  new BoxDecoration(
-                                                                color: const Color
-                                                                    .fromARGB(
-                                                                    116,
-                                                                    0,
-                                                                    0,
-                                                                    0),
-                                                                shape: BoxShape
-                                                                    .circle,
                                                               ),
                                                             ),
                                                           ),
@@ -394,7 +403,6 @@ class _AddViagemPageState extends State<AddViagemPage> {
                                 return Container();
                               },
                               onRatingUpdate: (rating) {
-                                print(rating);
                                 setState(() {
                                   avaliacao = rating;
                                 });
@@ -424,8 +432,8 @@ class _AddViagemPageState extends State<AddViagemPage> {
   _botaoDataInicioFim() {
     const dayTextStyle =
         TextStyle(color: Colors.black, fontWeight: FontWeight.normal);
-    final weekendTextStyle =
-        const TextStyle(color: Colors.black, fontWeight: FontWeight.w600);
+    const weekendTextStyle =
+        TextStyle(color: Colors.black, fontWeight: FontWeight.w600);
     final config = CalendarDatePicker2WithActionButtonsConfig(
       dayTextStyle: dayTextStyle,
       calendarType: CalendarDatePicker2Type.range,
@@ -564,8 +572,7 @@ class _AddViagemPageState extends State<AddViagemPage> {
                 const SizedBox(width: 5),
                 Text(_dialogCalendarPickerValue.isEmpty
                     ? 'Data Início e Fim'
-                    : _dialogCalendarPickerValue != null &&
-                            _dialogCalendarPickerValue.length >= 2
+                    : _dialogCalendarPickerValue.length >= 2
                         ? _getValueText(
                             config.calendarType, _dialogCalendarPickerValue)
                         : ''),
@@ -614,7 +621,7 @@ class _AddViagemPageState extends State<AddViagemPage> {
             pais: controllerPais.text),
         avaliacao: avaliacao ?? 3);
     try {
-      var resultado = await ViagemClient()
+      await ViagemClient()
           .inserirViagem(_auth.currentUser!.displayName!, viagem);
       snackWarning(
         text: "Viagem criada com sucesso!",

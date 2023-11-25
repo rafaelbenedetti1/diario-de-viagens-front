@@ -27,7 +27,6 @@ class AppFormField extends StatelessWidget {
   String? Function(String?)? validator;
   void Function(String)? onChanged;
 
-
   AppFormField(
       {this.label,
       this.hint,
@@ -55,7 +54,7 @@ class AppFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var style = Theme.of(context).textTheme.button;
+    var style = Theme.of(context).textTheme.labelLarge;
 
     if (!enabled && fadeTextIfDisabled) {
       style = style!.copyWith(color: style.color!.withAlpha(100));
@@ -72,7 +71,7 @@ class AppFormField extends StatelessWidget {
             borderRadius: ThemeApp.defaultCardBorderRadius(),
             boxShadow: ThemeApp.defaultShadow(context),
           ),
-          padding: EdgeInsets.only(left: 20, right: 8, bottom: 15),
+          padding: const EdgeInsets.only(left: 20, right: 8, bottom: 15),
           child: TextFormField(
             onChanged: onChanged,
             validator: validator,
@@ -87,18 +86,14 @@ class AppFormField extends StatelessWidget {
             obscureText: obsecureText,
             maxLines: maxLines,
             textCapitalization: textCapitalization,
-            textInputAction: textInputAction != null
-                ? textInputAction
-                : maxLines > 1
-                    ? TextInputAction.done
-                    : TextInputAction.next,
-            keyboardType: keyboardType == null
-                ? maxLines > 1
+            textInputAction: textInputAction ??
+                (maxLines > 1 ? TextInputAction.done : TextInputAction.next),
+            keyboardType: keyboardType ??
+                (maxLines > 1
                     ? TextInputType.multiline
                     : isNumber
                         ? TextInputType.phone
-                        : TextInputType.text
-                : keyboardType,
+                        : TextInputType.text),
             onFieldSubmitted: (v) {
               if (nextFocus != null)
                 FocusScope.of(context).requestFocus(nextFocus);

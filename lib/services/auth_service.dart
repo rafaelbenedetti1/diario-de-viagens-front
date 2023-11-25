@@ -1,5 +1,4 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class AuthService extends ChangeNotifier {
@@ -40,7 +39,7 @@ class AuthService extends ChangeNotifier {
       await _auth.signInWithEmailAndPassword(email: email, password: senha);
       _getUser();
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'invalid-login-credentials') {
+      if (e.code == 'INVALID_LOGIN_CREDENTIALS') {
         throw AuthException('Usuário ou Senha inválidos.');
       } else if (e.code == "invalid-email") {
         throw AuthException('Informe um email válido');

@@ -23,7 +23,6 @@ class _MainPageState extends State<MainPage> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        // drawer: DrawerConfig(),
         body: screens[currentIndex],
         bottomNavigationBar: AnimatedBottomNavigationBar.builder(
           itemCount: 2,

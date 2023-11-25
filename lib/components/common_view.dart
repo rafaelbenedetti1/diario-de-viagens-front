@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-
 ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackWarning(
     {required String text,
     required ScaffoldMessengerState scaffoldMessengerKey,
@@ -11,14 +10,10 @@ ScaffoldFeatureController<SnackBar, SnackBarClosedReason> snackWarning(
         borderRadius: BorderRadius.only(
             topLeft: Radius.circular(5), topRight: Radius.circular(5))),
     elevation: 8,
-    duration: Duration(seconds: 5),
+    duration: const Duration(seconds: 5),
     backgroundColor: cor,
   );
 
-  if (scaffoldMessengerKey != null) {
-    scaffoldMessengerKey.hideCurrentSnackBar();
-    return scaffoldMessengerKey.showSnackBar(snack);
-  }
+  scaffoldMessengerKey.hideCurrentSnackBar();
   return scaffoldMessengerKey.showSnackBar(snack);
 }
-

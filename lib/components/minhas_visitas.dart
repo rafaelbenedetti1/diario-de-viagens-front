@@ -44,25 +44,27 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
     visitasMobx.setVisitas([]);
     visitasMobx.adicionaVisita([]);
     if (widget.visitasViagem != null) {
-      visitasMobx.adicionaVisita(widget.visitasViagem?? []);
+      visitasMobx.adicionaVisita(widget.visitasViagem ?? []);
       widget.visitasViagem?.forEach((element) {
-        visitasMobx.setVisitas(List.from(visitasMobx.visitasWidget.value)..add(DeliveryProcess(element.nomeLocal, messages: [
-          Text(
-            element.data,
-          ),
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 12.0),
-            child: Image.memory(
-              base64Decode(element.imagem),
-              height: 150,
-              width: 200,
-              fit: BoxFit.cover, // D
-              // Define o modo de ajuste para cobrir o espaço
+        visitasMobx.setVisitas(List.from(visitasMobx.visitasWidget.value)
+          ..add(DeliveryProcess(element.nomeLocal, messages: [
+            Text(
+              element.data,
             ),
-          ),
-        ])));
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12.0),
+              child: Image.memory(
+                base64Decode(element.imagem),
+                height: 150,
+                width: 200,
+                fit: BoxFit.cover, // D
+                // Define o modo de ajuste para cobrir o espaço
+              ),
+            ),
+          ])));
       });
-      visitasMobx.setVisitas( List.from(visitasMobx.visitasWidget.value)..add(DeliveryProcess.complete()));
+      visitasMobx.setVisitas(List.from(visitasMobx.visitasWidget.value)
+        ..add(const DeliveryProcess.complete()));
     } else {
       visitasMobx.setVisitas([]);
     }
@@ -78,20 +80,21 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
+                  const Text(
                     'Minhas Visitas',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
                   ),
                   Icon(
                     Icons.park_outlined,
-                    color: theme.primaryColor,
+                    color: Color.fromRGBO(245, 245, 245, 1),
                     size: 35,
                   ),
                 ],
               )),
           ElevatedButton(
             style: ElevatedButton.styleFrom(
-                backgroundColor: theme.primaryColor, fixedSize: Size(230, 40)),
+                backgroundColor: theme.primaryColor,
+                fixedSize: const Size(230, 40)),
             onPressed: () async {
               showDialog(
                 barrierDismissible: false,
@@ -105,12 +108,12 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                           title: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text("Adicionar Visita"),
+                              const Text("Adicionar Visita"),
                               IconButton(
                                   onPressed: () {
                                     Navigator.pop(context);
                                   },
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.close,
                                     color: Colors.red,
                                     size: 30,
@@ -119,7 +122,7 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                           ),
                           content: Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Container(
+                            child: SizedBox(
                               height: 400,
                               width: MediaQuery.of(context).size.width * 0.9,
                               child: SingleChildScrollView(
@@ -129,7 +132,7 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                                     AppFormField(
                                       controller: controllerNome,
                                       label: 'Local',
-                                      suffixIcon: Icon(
+                                      suffixIcon: const Icon(
                                         FontAwesomeIcons.tag,
                                         size: 20,
                                       ),
@@ -139,16 +142,15 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                                       padding: const EdgeInsets.only(top: 20.0),
                                       child: GestureDetector(
                                         onTap: () async {
-                                          String? newImg64 =
-                                              await pickSvg(allowMultiple: false);
+                                          String? newImg64 = await pickSvg(
+                                              allowMultiple: false);
                                           setState(() {
                                             img64 = newImg64 ?? '';
                                           });
-                                          print(img64);
                                         },
                                         child: Material(
                                           elevation: 2,
-                                          child: Container(
+                                          child: SizedBox(
                                             width: 400,
                                             height: 150,
                                             child: Column(
@@ -156,10 +158,11 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                                                   MainAxisAlignment.center,
                                               children: [
                                                 img64.isEmpty
-                                                    ? Column(
+                                                    ? const Column(
                                                         children: [
                                                           Icon(
-                                                            Icons.image_outlined,
+                                                            Icons
+                                                                .image_outlined,
                                                             size: 40,
                                                           ),
                                                           Text('Anexar Imagem'),
@@ -178,7 +181,7 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(height: 14),
+                                    const SizedBox(height: 14),
                                     ElevatedButton(
                                       style: ElevatedButton.styleFrom(
                                         padding: const EdgeInsets.symmetric(
@@ -189,38 +192,48 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                                         if (controllerData.text.isNotEmpty &&
                                             controllerNome.text.isNotEmpty &&
                                             img64.isNotEmpty) {
-                                          if (visitasMobx.visitasWidget.value.isNotEmpty) {
-                                            visitasMobx.visitasWidget.value.removeLast();
+                                          if (visitasMobx
+                                              .visitasWidget.value.isNotEmpty) {
+                                            visitasMobx.visitasWidget.value
+                                                .removeLast();
                                           }
-                          
+
                                           setState(() {
                                             var visita = Visita(
                                                 data: controllerData.text,
                                                 imagem: img64,
                                                 nomeLocal: controllerNome.text);
-                                    
+
                                             lista.add(visita);
-                                            visitasMobx.adicionaVisita([...widget.visitasViagem ?? [], ...lista]);
-                                            visitasMobx.setVisitas( List.from(visitasMobx.visitasWidget.value)..add(DeliveryProcess(
-                                                controllerNome.text,
-                                                messages: [
-                                                  Text(
-                                                    controllerData.text,
-                                                  ),
-                                                  Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        vertical: 12.0),
-                                                    child: Image.memory(
-                                                      base64Decode(img64),
-                                                      height: 150,
-                                                      width: 200,
-                                                      fit: BoxFit.cover, // D
-                                                      // Define o modo de ajuste para cobrir o espaço
+                                            visitasMobx.adicionaVisita([
+                                              ...widget.visitasViagem ?? [],
+                                              ...lista
+                                            ]);
+                                            visitasMobx.setVisitas(List.from(
+                                                visitasMobx.visitasWidget.value)
+                                              ..add(DeliveryProcess(
+                                                  controllerNome.text,
+                                                  messages: [
+                                                    Text(
+                                                      controllerData.text,
                                                     ),
-                                                  ),
-                                                ])));
-                                            visitasMobx.setVisitas( List.from(visitasMobx.visitasWidget.value)..add(DeliveryProcess.complete()));
+                                                    Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 12.0),
+                                                      child: Image.memory(
+                                                        base64Decode(img64),
+                                                        height: 150,
+                                                        width: 200,
+                                                        fit: BoxFit.cover, // D
+                                                        // Define o modo de ajuste para cobrir o espaço
+                                                      ),
+                                                    ),
+                                                  ])));
+                                            visitasMobx.setVisitas(List.from(
+                                                visitasMobx.visitasWidget.value)
+                                              ..add(const DeliveryProcess
+                                                  .complete()));
                                             controllerData.clear();
                                             controllerNome.clear();
                                             img64 = '';
@@ -249,7 +262,7 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
                 },
               );
             },
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text('Adicionar Visita'),
@@ -258,96 +271,107 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
               ],
             ),
           ),
-          Observer(
-            builder: (context) {
-              return ValueListenableBuilder(
+          Observer(builder: (context) {
+            return ValueListenableBuilder(
                 valueListenable: visitasMobx.visitasWidget,
                 builder: (context, value, _) {
                   return Padding(
-      padding: const EdgeInsets.only(top: 12.0),
-      child: DefaultTextStyle(
-        style: TextStyle(
-          color: Color.fromARGB(255, 133, 133, 133),
-          fontSize: 15,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 5),
-          child: FixedTimeline.tileBuilder(
-            theme: TimelineThemeData(
-              nodePosition: 0,
-              color: Color(0xff989898),
-              indicatorTheme: IndicatorThemeData(
-                position: 0,
-                size: 20.0,
-              ),
-              connectorTheme: ConnectorThemeData(
-                thickness: 2.5,
-              ),
-            ),
-            builder: TimelineTileBuilder.connected(
-              connectionDirection: ConnectionDirection.before,
-              itemCount: value.length,
-              contentsBuilder: (_, index) {
-                if (value[index].isCompleted) return null;
-    
-                return Padding(
-                  padding: EdgeInsets.only(left: 8.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            value[index].tituloVisita,
-                            style: DefaultTextStyle.of(context).style.copyWith(
-                                fontSize: 16.0, fontWeight: FontWeight.bold),
-                          ),
-                          IconButton(icon: Icon(Icons.delete, color: Colors.red, size: 28), onPressed: () {
-                            setState(() {
-                            value.removeAt(index);
-                            visitasMobx.visitas.removeAt(index);
-                            visitasMobx.setVisitas(value);
-                            visitasMobx.adicionaVisita(visitasMobx.visitas);
-                            });
-               
-                          })
-                        ],
+                    padding: const EdgeInsets.only(top: 12.0),
+                    child: DefaultTextStyle(
+                      style: const TextStyle(
+                        color: Color.fromARGB(255, 133, 133, 133),
+                        fontSize: 15,
                       ),
-                      _InnerTimeline(messages: value[index].messages),
-                    ],
-                  ),
-                );
-              },
-              indicatorBuilder: (_, index) {
-                if (value[index].isCompleted) {
-                  return DotIndicator(
-                    color: Color(0xff989898),
-                    child: Icon(
-                      Icons.check,
-                      color: Colors.white,
-                      size: 12.0,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 5),
+                        child: FixedTimeline.tileBuilder(
+                          theme: TimelineThemeData(
+                            nodePosition: 0,
+                            color: const Color(0xff989898),
+                            indicatorTheme: const IndicatorThemeData(
+                              position: 0,
+                              size: 20.0,
+                            ),
+                            connectorTheme: const ConnectorThemeData(
+                              thickness: 2.5,
+                            ),
+                          ),
+                          builder: TimelineTileBuilder.connected(
+                            connectionDirection: ConnectionDirection.before,
+                            itemCount: value.length,
+                            contentsBuilder: (_, index) {
+                              if (value[index].isCompleted) return null;
+
+                              return Padding(
+                                padding: const EdgeInsets.only(left: 8.0),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          value[index].tituloVisita,
+                                          style: DefaultTextStyle.of(context)
+                                              .style
+                                              .copyWith(
+                                                  fontSize: 16.0,
+                                                  fontWeight: FontWeight.bold),
+                                        ),
+                                        IconButton(
+                                            icon: const Icon(Icons.delete,
+                                                color: Colors.red, size: 28),
+                                            onPressed: () {
+                                              setState(() {
+                                                value.removeAt(index);
+                                                visitasMobx.visitas
+                                                    .removeAt(index);
+                                                visitasMobx.setVisitas(value);
+                                                visitasMobx.adicionaVisita(
+                                                    visitasMobx.visitas);
+                                              });
+                                            })
+                                      ],
+                                    ),
+                                    _InnerTimeline(
+                                        messages: value[index].messages),
+                                  ],
+                                ),
+                              );
+                            },
+                            indicatorBuilder: (_, index) {
+                              if (value[index].isCompleted) {
+                                return const DotIndicator(
+                                  color: Color(0xff989898),
+                                  child: Icon(
+                                    Icons.check,
+                                    color: Colors.white,
+                                    size: 12.0,
+                                  ),
+                                );
+                              } else {
+                                return const OutlinedDotIndicator(
+                                  borderWidth: 2.5,
+                                );
+                              }
+                            },
+                            connectorBuilder: (_, index, ___) =>
+                                SolidLineConnector(
+                              color: value[index].isCompleted
+                                  ? const Color(0xff989898)
+                                  : null,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                   );
-                } else {
-                  return OutlinedDotIndicator(
-                    borderWidth: 2.5,
-                  );
-                }
-              },
-              connectorBuilder: (_, index, ___) => SolidLineConnector(
-                color: value[index].isCompleted ? Color(0xff989898) : null,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );;
-                }
-              );
-            }
-          ),
+                  ;
+                });
+          }),
         ],
       ),
     );
@@ -356,8 +380,8 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
   _buildCalendarDialogButton() {
     const dayTextStyle =
         TextStyle(color: Colors.black, fontWeight: FontWeight.normal);
-    final weekendTextStyle =
-        const TextStyle(color: Colors.black, fontWeight: FontWeight.w600);
+    const weekendTextStyle =
+        TextStyle(color: Colors.black, fontWeight: FontWeight.w600);
     final config = CalendarDatePicker2WithActionButtonsConfig(
       dayTextStyle: dayTextStyle,
       calendarType: CalendarDatePicker2Type.single,
@@ -471,7 +495,7 @@ class _MinhasVisitasState extends State<MinhasVisitas> {
         Flexible(
           child: AppFormField(
             label: 'Data',
-            suffixIcon: Icon(
+            suffixIcon: const Icon(
               Icons.calendar_month_outlined,
               size: 20,
             ),
@@ -556,8 +580,8 @@ class _InnerTimeline extends StatelessWidget {
           }
 
           return Padding(
-            padding: EdgeInsets.only(left: 8.0),
-            child: Container(
+            padding: const EdgeInsets.only(left: 8.0),
+            child: SizedBox(
                 width: index == 2 ? 400 : 120,
                 height: 160,
                 child: messages[index - 1]),

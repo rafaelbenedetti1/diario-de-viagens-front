@@ -19,16 +19,15 @@ import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class VisualizarViagemPage extends StatefulWidget {
-   String usuario = '';
-   Viagem? viagem;
-   VisualizarViagemPage({super.key, required this.viagem});
+  String usuario = '';
+  Viagem? viagem;
+  VisualizarViagemPage({super.key, required this.viagem});
 
   @override
   State<VisualizarViagemPage> createState() => _VisualizarViagemPageState();
 }
 
 class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
-
   String img64 = '';
   List<DateTime?> _dialogCalendarPickerValue = [];
   List<String> imagensSelecionadas = [];
@@ -58,7 +57,8 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
       imagensSelecionadas.add(element);
     });
     final formato = DateFormat('dd/MM/yyyy', 'pt_BR');
-    _dialogCalendarPickerValue.add((formato.parse(widget.viagem?.dataInicio ?? '')));
+    _dialogCalendarPickerValue
+        .add((formato.parse(widget.viagem?.dataInicio ?? '')));
     _dialogCalendarPickerValue.add(formato.parse(widget.viagem?.dataFim ?? ''));
     avaliacao = widget.viagem?.avaliacao;
   }
@@ -69,19 +69,16 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
       return Scaffold(
           resizeToAvoidBottomInset: false,
           floatingActionButton: FloatingActionButton(
-            backgroundColor: Color.fromARGB(214, 4, 69, 101),
-            child: Icon(Icons.save_outlined, size: 30),
-            onPressed: () {
-            _gravar(visitasMobx.visitas);
-          }),
+              backgroundColor: const Color.fromARGB(214, 4, 69, 101),
+              child: const Icon(Icons.save_outlined, size: 30),
+              onPressed: () {
+                _gravar(visitasMobx.visitas);
+              }),
           appBar: AppBar(
             toolbarHeight: 55,
-                    leading: BackButton(
-          onPressed: () {
-            Navigator.pop(context, true);
-
-          }
-        ),
+            leading: BackButton(onPressed: () {
+              Navigator.pop(context, true);
+            }),
             backgroundColor: theme.primaryColor,
             centerTitle: true,
             title: Image.asset(
@@ -134,15 +131,14 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
                                       icon: Container(
                                         height: 35,
                                         width: 35,
+                                        decoration: const BoxDecoration(
+                                          color: Color.fromARGB(116, 0, 0, 0),
+                                          shape: BoxShape.circle,
+                                        ),
                                         child: const Icon(
                                           Icons.edit,
                                           size: 25,
                                           color: Colors.white,
-                                        ),
-                                        decoration: new BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              116, 0, 0, 0),
-                                          shape: BoxShape.circle,
                                         ),
                                       ),
                                     ),
@@ -155,15 +151,14 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
                                       icon: Container(
                                         height: 35,
                                         width: 35,
+                                        decoration: const BoxDecoration(
+                                          color: Color.fromARGB(116, 0, 0, 0),
+                                          shape: BoxShape.circle,
+                                        ),
                                         child: const Icon(
                                           Icons.delete,
                                           size: 25,
                                           color: Colors.white,
-                                        ),
-                                        decoration: new BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              116, 0, 0, 0),
-                                          shape: BoxShape.circle,
                                         ),
                                       ),
                                     ),
@@ -248,7 +243,10 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
                             ),
                             _botaoDataInicioFim(),
                             const Divider(height: 2),
-                            MinhasVisitas(visitasViagem: widget.viagem!.visitas.isEmpty ? null : widget.viagem!.visitas),
+                            MinhasVisitas(
+                                visitasViagem: widget.viagem!.visitas.isEmpty
+                                    ? null
+                                    : widget.viagem!.visitas),
                             const Divider(height: 2),
                             Padding(
                                 padding: const EdgeInsets.all(16.0),
@@ -340,22 +338,22 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
                                                             icon: Container(
                                                               height: 35,
                                                               width: 35,
+                                                              decoration:
+                                                                  const BoxDecoration(
+                                                                color: Color
+                                                                    .fromARGB(
+                                                                        116,
+                                                                        0,
+                                                                        0,
+                                                                        0),
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
                                                               child: const Icon(
                                                                 Icons.delete,
                                                                 size: 25,
                                                                 color: Colors
                                                                     .white,
-                                                              ),
-                                                              decoration:
-                                                                  new BoxDecoration(
-                                                                color: const Color
-                                                                    .fromARGB(
-                                                                    116,
-                                                                    0,
-                                                                    0,
-                                                                    0),
-                                                                shape: BoxShape
-                                                                    .circle,
                                                               ),
                                                             ),
                                                           ),
@@ -424,7 +422,6 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
                                 return Container();
                               },
                               onRatingUpdate: (rating) {
-                                print(rating);
                                 setState(() {
                                   avaliacao = rating;
                                 });
@@ -454,8 +451,8 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
   _botaoDataInicioFim() {
     const dayTextStyle =
         TextStyle(color: Colors.black, fontWeight: FontWeight.normal);
-    final weekendTextStyle =
-        const TextStyle(color: Colors.black, fontWeight: FontWeight.w600);
+    const weekendTextStyle =
+        TextStyle(color: Colors.black, fontWeight: FontWeight.w600);
     final config = CalendarDatePicker2WithActionButtonsConfig(
       dayTextStyle: dayTextStyle,
       calendarType: CalendarDatePicker2Type.range,
@@ -594,8 +591,7 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
                 const SizedBox(width: 5),
                 Text(_dialogCalendarPickerValue.isEmpty
                     ? 'Data Início e Fim'
-                    : _dialogCalendarPickerValue != null &&
-                            _dialogCalendarPickerValue.length >= 2
+                    : _dialogCalendarPickerValue.length >= 2
                         ? _getValueText(
                             config.calendarType, _dialogCalendarPickerValue)
                         : ''),
@@ -633,7 +629,7 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
 
   _gravar(List<Visita> visitas) async {
     var viagem = Viagem(
-      id: widget.viagem?.id,
+        id: widget.viagem?.id,
         visitas: visitas,
         imagemCapa: img64,
         dataInicio: dataInicio,
@@ -645,18 +641,19 @@ class _VisualizarViagemPageState extends State<VisualizarViagemPage> {
             pais: controllerPais.text),
         avaliacao: avaliacao);
     try {
-      var resultado = await ViagemClient()
+      await ViagemClient()
           .inserirViagem(_auth.currentUser!.displayName!, viagem);
       snackWarning(
-          text: "Viagem atualizada com sucesso!",
-          cor: ThemeApp.green,
-          scaffoldMessengerKey: ScaffoldMessenger.of(context),
-            );      // BlocProvider.getBloc<ReloadBloc>().update();
+        text: "Viagem atualizada com sucesso!",
+        cor: ThemeApp.green,
+        scaffoldMessengerKey: ScaffoldMessenger.of(context),
+      ); // BlocProvider.getBloc<ReloadBloc>().update();
     } catch (e) {
       snackWarning(
-          text: "Erro no servidor ao processar requisição",
-          cor: ThemeApp.orange,
-          scaffoldMessengerKey: ScaffoldMessenger.of(context),
-);    }
+        text: "Erro no servidor ao processar requisição",
+        cor: ThemeApp.orange,
+        scaffoldMessengerKey: ScaffoldMessenger.of(context),
+      );
+    }
   }
 }
